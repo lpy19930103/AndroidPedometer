@@ -3,10 +3,10 @@ package com.lipy.step;
 import com.lipy.step.common.BaseApplication;
 import com.lipy.step.common.PedometerEvent;
 import com.lipy.step.dao.core.PedometerEntity;
-import com.lipy.step.dao.core.PedometerEntityDao;
 import com.lipy.step.pedometer.ApplicationModule;
 import com.lipy.step.pedometer.PedometerRepository;
 import com.lipy.step.result.IGetPedometerResult;
+import com.lipy.step.result.PedometerUpDateResult;
 import com.lipy.step.utils.HardwarePedometerUtil;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -55,6 +55,12 @@ public class MainActivity extends AppCompatActivity {
 //        });
         init();
         ApplicationModule.getInstance().getPedometerManager().checkServiceStart();
+        ApplicationModule.getInstance().getPedometerManager().setPedometerUpDateResult(new PedometerUpDateResult() {
+            @Override
+            public void onPedometerUpDate(int count) {
+                tvSteps.setText(count + "步");
+            }
+        });
     }
 
     private void init() {
@@ -79,13 +85,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        BaseApplication.getInstances().setDatabase(this);
-        PedometerEntityDao pedometerEntityDao = BaseApplication.getInstances().getDaoSession().getPedometerEntityDao();
-        if (pedometerEntityDao != null) {
-            PedometerEntity pedometerEntity = pedometerEntityDao.loadAll().get(pedometerEntityDao.loadAll().size() - 1);
-            tvSteps.setText(pedometerEntity.getTargetStepCount() + "步");
-            tvTargetSteps.setText("日期：" + pedometerEntity.getDate() );
-        }
+//        BaseApplication.getInstances().setDatabase(this);
+//        PedometerEntityDao pedometerEntityDao = BaseApplication.getInstances().getDaoSession().getPedometerEntityDao();
+//        if (pedometerEntityDao != null) {
+//            PedometerEntity pedometerEntity = pedometerEntityDao.loadAll().get(pedometerEntityDao.loadAll().size() - 1);
+//            tvSteps.setText(pedometerEntity.getTargetStepCount() + "步");
+//            tvTargetSteps.setText("日期：" + pedometerEntity.getDate() );
+//        }
     }
 
     /**
@@ -115,5 +121,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
 
+    @Override
+    protected void onDestroy() {
+        ApplicationModule.getInstance().getPedometerManager().unbindPedometerService();
+        super.onDestroy();
+    }
 }

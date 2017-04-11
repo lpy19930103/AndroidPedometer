@@ -1,6 +1,7 @@
 package com.lipy.step.pedometer;
 
 import com.lipy.step.common.BaseApplication;
+import com.lipy.step.result.PedometerUpDateListener;
 import com.lipy.step.utils.HardwarePedometerUtil;
 
 import android.app.Service;
@@ -8,7 +9,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.Log;
 
 /**
@@ -21,9 +27,50 @@ public class PedometerService extends Service {
     private SensorManager mSensorManager;  // 传感器服务
     private PedometerRepositoryIml mPedometerRepositoryIml;  // 传感器监听对象
 
+    private static final int RECEIVE_MESSAGE_CODE = 0x0001;
+
+    private static final int SEND_MESSAGE_CODE = 0x0002;
+
+    private Messenger clientMessenger = null;
+
+    private int mCount = 0;
+
+
+
+    //实现一个能够处理接收信息的Handler
+    private Handler serviceHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == RECEIVE_MESSAGE_CODE) {
+                Log.e("lipy", "RECEIVE_MESSAGE_CODE");
+                if (clientMessenger == null) {
+                    clientMessenger = msg.replyTo;//这个Message是在客户端中创建的
+                }
+                if (clientMessenger != null) {
+                    Message msgToClient = Message.obtain();
+                    msgToClient.what = SEND_MESSAGE_CODE;
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("msg", mCount);
+                    msgToClient.setData(bundle);
+                    try {
+                        clientMessenger.send(msgToClient);
+
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    };
+
+    //
+
+
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        Messenger serviceMessenger = new Messenger(serviceHandler);
+        return serviceMessenger.getBinder();
     }
 
     @Override
@@ -33,6 +80,16 @@ public class PedometerService extends Service {
         Log.e("lipy", "PedometerService onCreate");
         mPedometerRepositoryIml = ApplicationModule.getInstance().getPedometerRepository();
         mPedometerRepositoryIml.initData();
+        mPedometerRepositoryIml.setPedometerUpDateListener(new PedometerUpDateListener() {
+            @Override
+            public void PedometerUpDate(int count) {
+                mCount = count;
+//                msg.what = RECEIVE_MESSAGE_CODE;
+//                msg.obj = count;
+                Log.e("lipy", "PedometerUpDate= " + count);
+                serviceHandler.sendEmptyMessage(RECEIVE_MESSAGE_CODE);
+            }
+        });
 
         ApplicationModule.getInstance().getPedometerManager().init();
 

@@ -1,15 +1,14 @@
 package com.lipy.step.common;
 
-import com.lipy.step.pedometer.ApplicationModule;
 import com.lipy.step.dao.core.DaoMaster;
 import com.lipy.step.dao.core.DaoSession;
+import com.lipy.step.pedometer.ApplicationModule;
 
 import org.greenrobot.eventbus.EventBus;
 
 import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 
 /**
@@ -96,15 +95,6 @@ public class BaseApplication extends Application {
     public DaoSession getDaoSession() {
         return mDaoSession;
     }
-
-//    public PedometerEntityDao getDao() {
-//        PedometerEntityDao pedometerEntityDao = mDaoSession.getPedometerEntityDao();
-//        if (pedometerEntityDao == null){
-//            setDatabase();
-//            pedometerEntityDao = mDaoSession.getPedometerEntityDao();
-//        }
-//        return pedometerEntityDao;
-//    }
 
 
     public SQLiteDatabase getDb() {

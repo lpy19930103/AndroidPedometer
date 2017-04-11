@@ -1,11 +1,20 @@
 package com.lipy.step.pedometer;
 
 import com.lipy.step.common.BaseApplication;
+import com.lipy.step.result.PedometerUpDateResult;
 import com.lipy.step.utils.HardwarePedometerUtil;
 
 import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.Log;
 
 /**
@@ -13,17 +22,23 @@ import android.util.Log;
  * Created by lipy on 2017/4/10 0010.
  */
 public class PedometerManager {
-
+    public static final int MSG_SAY_HELLO = 0;
     public boolean IsServiceRunning = false;
-
+    public static int SAY_HELLO_TO_CLIENT = 1;
     private Context mContext;
 
     private Intent mService;
+    private static String PACKAGE_SERVICE = "com.lipy.step.pedometer";
+    private static String NAME_SERVICE = "PedometerService";
 
 
     public PedometerManager() {
         mContext = BaseApplication.getAppContext();
         mService = new Intent(mContext, PedometerService.class);
+//        ComponentName componentName = new ComponentName(
+//                PACKAGE_SERVICE,
+//                NAME_SERVICE);
+//        mService.setComponent(componentName);
     }
 
     /**
@@ -40,6 +55,8 @@ public class PedometerManager {
      */
     public void startPedometerService() {
         mContext.startService(mService);
+
+        mContext.bindService(mService, mServiceConnection, Context.BIND_AUTO_CREATE);
         IsServiceRunning = true;
     }
 
@@ -48,7 +65,12 @@ public class PedometerManager {
      */
     public void stopPedometerService() {
         IsServiceRunning = false;
+        mContext.unbindService(mServiceConnection);
         mContext.stopService(mService);
+    }
+
+    public void unbindPedometerService() {
+        mContext.unbindService(mServiceConnection);
     }
 
 
@@ -74,4 +96,56 @@ public class PedometerManager {
 
     }
 
+    private static final int SEND_MESSAGE_CODE = 0x0001;
+    private static final int RECEIVE_MESSAGE_CODE = 0x0002;
+    private PedometerUpDateResult mPedometerUpDateResult;
+
+    private Messenger serviceMessenger = null;
+
+    private Messenger clientMessenger = new Messenger(new ClientHandler());
+
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.e("lipy", "service connected");
+            serviceMessenger = new Messenger(service);
+            Message msg = Message.obtain();
+            msg.what = SEND_MESSAGE_CODE;
+            Bundle data = new Bundle();
+            data.putString("msg", "你好，MyService，我是客户端");
+            msg.setData(data);
+            msg.replyTo = clientMessenger;
+            try {
+                serviceMessenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
+
+    private class ClientHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == RECEIVE_MESSAGE_CODE) {
+                Bundle data = msg.getData();
+                if (data != null) {
+                    int count = data.getInt("msg");
+                    if (mPedometerUpDateResult != null){
+                        mPedometerUpDateResult.onPedometerUpDate(count);
+                    }
+                }
+            }
+        }
+    }
+
+    public void setPedometerUpDateResult(PedometerUpDateResult upDateResult) {
+        mPedometerUpDateResult = upDateResult;
+    }
 }

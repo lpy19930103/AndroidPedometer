@@ -1,6 +1,7 @@
 package com.lipy.step.pedometer;
 
 import com.lipy.step.common.BaseApplication;
+import com.lipy.step.result.PedometerUpDateListener;
 
 import android.content.Context;
 
@@ -48,6 +49,12 @@ public class ApplicationModule {
 
     public PedometerRepositoryIml getPedometerRepository() {
         return mPedometerRepository;
+    }
+
+    public void setPedometerUpDateListener(PedometerUpDateListener pedometerUpDateListener) {
+        if (mPedometerRepository != null) {
+            mPedometerRepository.setPedometerUpDateListener(pedometerUpDateListener);
+        }
     }
 
 
