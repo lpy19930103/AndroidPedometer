@@ -8,6 +8,7 @@ import org.greenrobot.eventbus.EventBus;
 import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 
 /**
@@ -23,14 +24,17 @@ public class BaseApplication extends Application {
     private DaoMaster mDaoMaster;
     private DaoSession mDaoSession;
     public static BaseApplication instances;
+
+    public BaseApplication() {
+        sInstance = this;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
-        if (instances == null) {
-            instances = this;
-        }
-        setDatabase();
         ApplicationModule.initSingleton().onCreateMainProcess();
+        Log.e("lipy","onCreate");
+        setDatabase(getAppContext());
     }
 
     public static Context getAppContext() {
@@ -38,6 +42,9 @@ public class BaseApplication extends Application {
     }
 
     public static BaseApplication getInstances() {
+        if (instances == null) {
+            instances = new BaseApplication();
+        }
         return instances;
     }
 
@@ -79,16 +86,27 @@ public class BaseApplication extends Application {
     /**
      * 设置greenDao
      */
-    void setDatabase() {
-        mHelper = new DaoMaster.DevOpenHelper(this, "notes-db", null);
+    public void setDatabase(Context context) {
+        mHelper = new DaoMaster.DevOpenHelper(context, "pedometer-db", null);
         db = mHelper.getWritableDatabase();
         mDaoMaster = new DaoMaster(db);
         mDaoSession = mDaoMaster.newSession();
+        Log.e("lipy","mHelper:"+mHelper+"db:"+db+"mDaoMaster:"+mDaoMaster+"mDaoSession:"+mDaoSession+"mDaoSession.getPedometerEntityDao()"+mDaoSession.getPedometerEntityDao());
     }
 
     public DaoSession getDaoSession() {
         return mDaoSession;
     }
+
+//    public PedometerEntityDao getDao() {
+//        PedometerEntityDao pedometerEntityDao = mDaoSession.getPedometerEntityDao();
+//        if (pedometerEntityDao == null){
+//            setDatabase();
+//            pedometerEntityDao = mDaoSession.getPedometerEntityDao();
+//        }
+//        return pedometerEntityDao;
+//    }
+
 
     public SQLiteDatabase getDb() {
         return db;

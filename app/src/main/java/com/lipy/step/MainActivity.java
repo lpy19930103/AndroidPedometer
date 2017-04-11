@@ -1,6 +1,7 @@
 package com.lipy.step;
 
 import com.lipy.step.dao.core.PedometerEntity;
+import com.lipy.step.dao.core.PedometerEntityDao;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -72,7 +73,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        BaseApplication.getInstances().setDatabase(this);
+        PedometerEntityDao pedometerEntityDao = BaseApplication.getInstances().getDaoSession().getPedometerEntityDao();
+        if (pedometerEntityDao != null) {
+            PedometerEntity pedometerEntity = pedometerEntityDao.loadAll().get(pedometerEntityDao.loadAll().size() - 1);
+            tvSteps.setText(pedometerEntity.getTargetStepCount() + "步");
+            tvTargetSteps.setText("日期：" + pedometerEntity.getDate() );
+        }
     }
 
     /**
@@ -85,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccessGet(PedometerEntity cardEntity) {
                 if (cardEntity != null) {
                     tvSteps.setText(cardEntity.getStepCount() + "步");
-                    tvTargetSteps.setText("目标步数：" + cardEntity.getTargetStepCount() + "步");
+//                    tvTargetSteps.setText("目标步数：" + cardEntity.getTargetStepCount() + "步");
                 }
             }
         });

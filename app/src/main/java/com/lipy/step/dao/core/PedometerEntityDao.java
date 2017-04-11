@@ -25,9 +25,8 @@ public class PedometerEntityDao extends AbstractDao<PedometerEntity, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Date = new Property(1, String.class, "date", false, "DATE");
         public final static Property StepCount = new Property(2, Integer.class, "stepCount", false, "STEP_COUNT");
-        public final static Property DistanceInMeters = new Property(3, Double.class, "distanceInMeters", false, "DISTANCE_IN_METERS");
-        public final static Property Status = new Property(4, Integer.class, "status", false, "STATUS");
-        public final static Property TargetStepCount = new Property(5, Integer.class, "targetStepCount", false, "TARGET_STEP_COUNT");
+        public final static Property Status = new Property(3, Integer.class, "status", false, "STATUS");
+        public final static Property TargetStepCount = new Property(4, Integer.class, "targetStepCount", false, "TARGET_STEP_COUNT");
     };
 
 
@@ -44,11 +43,10 @@ public class PedometerEntityDao extends AbstractDao<PedometerEntity, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"PedometerLog\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
-                "\"DATE\" TEXT NOT NULL UNIQUE ," + // 1: date
+                "\"DATE\" TEXT NOT NULL ," + // 1: date
                 "\"STEP_COUNT\" INTEGER," + // 2: stepCount
-                "\"DISTANCE_IN_METERS\" REAL," + // 3: distanceInMeters
-                "\"STATUS\" INTEGER," + // 4: status
-                "\"TARGET_STEP_COUNT\" INTEGER);"); // 5: targetStepCount
+                "\"STATUS\" INTEGER," + // 3: status
+                "\"TARGET_STEP_COUNT\" INTEGER);"); // 4: targetStepCount
     }
 
     /** Drops the underlying database table. */
@@ -73,19 +71,14 @@ public class PedometerEntityDao extends AbstractDao<PedometerEntity, Long> {
             stmt.bindLong(3, stepCount);
         }
  
-        Double distanceInMeters = entity.getDistanceInMeters();
-        if (distanceInMeters != null) {
-            stmt.bindDouble(4, distanceInMeters);
-        }
- 
         Integer status = entity.getStatus();
         if (status != null) {
-            stmt.bindLong(5, status);
+            stmt.bindLong(4, status);
         }
  
         Integer targetStepCount = entity.getTargetStepCount();
         if (targetStepCount != null) {
-            stmt.bindLong(6, targetStepCount);
+            stmt.bindLong(5, targetStepCount);
         }
     }
 
@@ -102,9 +95,8 @@ public class PedometerEntityDao extends AbstractDao<PedometerEntity, Long> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.getString(offset + 1), // date
             cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2), // stepCount
-            cursor.isNull(offset + 3) ? null : cursor.getDouble(offset + 3), // distanceInMeters
-            cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // status
-            cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5) // targetStepCount
+            cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // status
+            cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4) // targetStepCount
         );
         return entity;
     }
@@ -115,9 +107,8 @@ public class PedometerEntityDao extends AbstractDao<PedometerEntity, Long> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setDate(cursor.getString(offset + 1));
         entity.setStepCount(cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2));
-        entity.setDistanceInMeters(cursor.isNull(offset + 3) ? null : cursor.getDouble(offset + 3));
-        entity.setStatus(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
-        entity.setTargetStepCount(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
+        entity.setStatus(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
+        entity.setTargetStepCount(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
      }
     
     /** @inheritdoc */

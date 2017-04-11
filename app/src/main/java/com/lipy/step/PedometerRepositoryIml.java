@@ -54,6 +54,7 @@ public class PedometerRepositoryIml implements SensorEventListener, PedometerRep
 
     public PedometerRepositoryIml() {
         mContext = BaseApplication.getAppContext();
+        Log.e("lipy", "mContext:" + mContext);
     }
 
     /**
@@ -86,7 +87,10 @@ public class PedometerRepositoryIml implements SensorEventListener, PedometerRep
 
         synchronized (this) {
             if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
-                mPedometerEntityDao = BaseApplication.getInstances().getDaoSession().getPedometerEntityDao();
+                if (mPedometerEntityDao == null) {
+                    BaseApplication.getInstances().setDatabase(mContext);
+                    mPedometerEntityDao = BaseApplication.getInstances().getDaoSession().getPedometerEntityDao();
+                }
                 mPedometerEntities = mPedometerEntityDao.loadAll();
                 Log.i("lipy", "Date =" + TimeUtil.getStringDateShort());
                 if (mPedometerEntities != null && mPedometerEntities.size() > 0) {
@@ -95,15 +99,19 @@ public class PedometerRepositoryIml implements SensorEventListener, PedometerRep
                     if (!TextUtils.isEmpty(date)) {
                         if (TimeUtil.IsToday(date)) {
                             mTodayStepEntity = pedometerEntity;
+                            Log.e("lipy", "是同一天 复用今天的Entity= "+ mPedometerEntityDao.loadAll().size());
                         } else if (TimeUtil.IsYesterday(date)) {
-                            mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, 0.0, 0, 0);
+                            Log.e("lipy", "是昨天 创建新的Entity= "+ mPedometerEntityDao.loadAll().size());
+                            mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, 0, 0);
                             mPedometerEntityDao.insert(mTodayStepEntity);
                         }
                     }
                 } else {
-                    mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, 0.0, 1, (int) event.values[0]));
-                    mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, 0.0, 0, 0);
+                    mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, 1, (int) event.values[0]));
+                    mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, 0, 0);
                     mPedometerEntityDao.insert(mTodayStepEntity);
+                    Log.e("lipy", "第一次安装创建2个Entity=  "+ mPedometerEntityDao.loadAll().size());
+
                 }
 
                 if (TimeUtil.getStringDateShort().equals(mTodayStepEntity.getDate())) {
@@ -111,15 +119,14 @@ public class PedometerRepositoryIml implements SensorEventListener, PedometerRep
                         if (!TimeUtil.IsYesterday(mTodayStepEntity.getDate())) {
                             PedometerEntity pedometerEntity = mPedometerEntities.get(mPedometerEntities.size() - 2);
                             mTodayStepEntity.setTargetStepCount((int) event.values[0] - pedometerEntity.getTargetStepCount());
+                            Log.e("lipy", "更新步数 = " + mTodayStepEntity.getTargetStepCount());
                         }
                     }
-                }else{
-
                 }
 
                 mPedometerEntityDao.update(mTodayStepEntity);
 
-                Log.e("lipy", "TargetStepCount = " + mTodayStepEntity.getTargetStepCount());
+                Log.e("lipy", "当日步数 " + mTodayStepEntity.getTargetStepCount());
 
                 // Step Counter，要准确很多,读取开机的传感器步数
                 Log.i("lipy", "FIRST_STEP_COUNT =" + FIRST_STEP_COUNT);

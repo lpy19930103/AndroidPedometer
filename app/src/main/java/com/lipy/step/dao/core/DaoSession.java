@@ -19,10 +19,8 @@ import de.greenrobot.dao.internal.DaoConfig;
 public class DaoSession extends AbstractDaoSession {
 
     private final DaoConfig pedometerEntityDaoConfig;
-    private final DaoConfig calendarEntityDaoConfig;
 
     private final PedometerEntityDao pedometerEntityDao;
-    private final CalendarEntityDao calendarEntityDao;
 
     public DaoSession(SQLiteDatabase db, IdentityScopeType type, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig>
             daoConfigMap) {
@@ -31,27 +29,17 @@ public class DaoSession extends AbstractDaoSession {
         pedometerEntityDaoConfig = daoConfigMap.get(PedometerEntityDao.class).clone();
         pedometerEntityDaoConfig.initIdentityScope(type);
 
-        calendarEntityDaoConfig = daoConfigMap.get(CalendarEntityDao.class).clone();
-        calendarEntityDaoConfig.initIdentityScope(type);
-
         pedometerEntityDao = new PedometerEntityDao(pedometerEntityDaoConfig, this);
-        calendarEntityDao = new CalendarEntityDao(calendarEntityDaoConfig, this);
 
         registerDao(PedometerEntity.class, pedometerEntityDao);
-        registerDao(CalendarEntity.class, calendarEntityDao);
     }
     
     public void clear() {
         pedometerEntityDaoConfig.getIdentityScope().clear();
-        calendarEntityDaoConfig.getIdentityScope().clear();
     }
 
     public PedometerEntityDao getPedometerEntityDao() {
         return pedometerEntityDao;
-    }
-
-    public CalendarEntityDao getCalendarEntityDao() {
-        return calendarEntityDao;
     }
 
 }

@@ -13,7 +13,6 @@ public class PedometerEntity {
     /** Not-null value. */
     private String date;
     private Integer stepCount;
-    private Double distanceInMeters;
     private Integer status;
     private Integer targetStepCount;
 
@@ -27,11 +26,10 @@ public class PedometerEntity {
         this.id = id;
     }
 
-    public PedometerEntity(Long id, String date, Integer stepCount, Double distanceInMeters, Integer status, Integer targetStepCount) {
+    public PedometerEntity(Long id, String date, Integer stepCount, Integer status, Integer targetStepCount) {
         this.id = id;
         this.date = date;
         this.stepCount = stepCount;
-        this.distanceInMeters = distanceInMeters;
         this.status = status;
         this.targetStepCount = targetStepCount;
     }
@@ -60,14 +58,6 @@ public class PedometerEntity {
 
     public void setStepCount(Integer stepCount) {
         this.stepCount = stepCount;
-    }
-
-    public Double getDistanceInMeters() {
-        return distanceInMeters;
-    }
-
-    public void setDistanceInMeters(Double distanceInMeters) {
-        this.distanceInMeters = distanceInMeters;
     }
 
     public Integer getStatus() {

@@ -20,7 +20,6 @@ public class PedometerManager {
 
     public PedometerManager() {
         mContext = BaseApplication.getAppContext();
-
         mService = new Intent(mContext, PedometerService.class);
     }
 
