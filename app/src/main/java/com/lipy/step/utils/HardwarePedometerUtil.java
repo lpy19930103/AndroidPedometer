@@ -1,4 +1,4 @@
-package com.lipy.step;
+package com.lipy.step.utils;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -54,7 +54,7 @@ public class HardwarePedometerUtil {
         boolean isServiceRunning = false;
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if ("com.lipy.step.PedometerService".equals(service.service.getClassName())) {
+            if ("com.lipy.step.pedometer.PedometerService".equals(service.service.getClassName())) {
                 isServiceRunning = true;
             }
         }

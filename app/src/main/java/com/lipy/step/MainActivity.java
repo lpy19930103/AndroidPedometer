@@ -1,7 +1,13 @@
 package com.lipy.step;
 
+import com.lipy.step.common.BaseApplication;
+import com.lipy.step.common.PedometerEvent;
 import com.lipy.step.dao.core.PedometerEntity;
 import com.lipy.step.dao.core.PedometerEntityDao;
+import com.lipy.step.pedometer.ApplicationModule;
+import com.lipy.step.pedometer.PedometerRepository;
+import com.lipy.step.result.IGetPedometerResult;
+import com.lipy.step.utils.HardwarePedometerUtil;
 
 import org.greenrobot.eventbus.Subscribe;
 

@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <application
-            android:name=".BaseApplication"
+            android:name=".common.BaseApplication"
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
@@ -18,7 +18,7 @@
             </intent-filter>
         </activity>
         <!-- 计步器服务 -->
-        <service android:name="com.lipy.step.PedometerService"
+        <service android:name=".pedometer.PedometerService"
                  android:label="PedometerService"
                  android:icon="@mipmap/ic_launcher"
                  android:enabled="true"
@@ -26,7 +26,7 @@
                  android:process=":remote"
         />
 
-        <receiver android:name=".StartBroadcastReceiver">
+        <receiver android:name=".pedometer.StartBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>

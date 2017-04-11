@@ -1,4 +1,7 @@
-package com.lipy.step;
+package com.lipy.step.pedometer;
+
+import com.lipy.step.common.BaseApplication;
+import com.lipy.step.utils.HardwarePedometerUtil;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -57,7 +60,7 @@ public class PedometerManager {
         if (HardwarePedometerUtil.supportsHardwareStepCounter(mContext)) {
             ActivityManager manager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
             for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-                if ("com.lipy.step.PedometerService".equals(service.service.getClassName())) {
+                if ("com.lipy.step.pedometer.PedometerService".equals(service.service.getClassName())) {
                     IsServiceRunning = true;
                 }
             }

@@ -1,4 +1,7 @@
-package com.lipy.step;
+package com.lipy.step.pedometer;
+
+import com.lipy.step.common.BaseApplication;
+import com.lipy.step.utils.HardwarePedometerUtil;
 
 import android.app.Service;
 import android.content.Context;
@@ -27,8 +30,7 @@ public class PedometerService extends Service {
     public void onCreate() {
         super.onCreate();
         mContext = BaseApplication.getAppContext();
-        Log.e("lipy", "<PedometerService> onCreate");
-
+        Log.e("lipy", "PedometerService onCreate");
         mPedometerRepositoryIml = ApplicationModule.getInstance().getPedometerRepository();
         mPedometerRepositoryIml.initData();
 
@@ -47,7 +49,7 @@ public class PedometerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("lipy", "<PedometerService> onStartCommand");
+        Log.i("lipy", "PedometerService onStartCommand");
 
         return START_STICKY;
     }
@@ -55,7 +57,7 @@ public class PedometerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i("lipy", "<PedometerService> onDestroy");
+        Log.i("lipy", "PedometerService onDestroy");
         if (mPedometerRepositoryIml != null) {
             mPedometerRepositoryIml.onDestroy();
             mSensorManager.unregisterListener(mPedometerRepositoryIml);

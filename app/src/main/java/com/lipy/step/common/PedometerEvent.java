@@ -1,4 +1,4 @@
-package com.lipy.step;
+package com.lipy.step.common;
 
 /**
  * 计步器event

@@ -1,5 +1,9 @@
-package com.lipy.step;
+package com.lipy.step.pedometer;
 
+import com.lipy.step.common.BaseApplication;
+import com.lipy.step.result.IGetPedometerResult;
+import com.lipy.step.common.PedometerEvent;
+import com.lipy.step.utils.TimeUtil;
 import com.lipy.step.dao.core.PedometerEntity;
 import com.lipy.step.dao.core.PedometerEntityDao;
 

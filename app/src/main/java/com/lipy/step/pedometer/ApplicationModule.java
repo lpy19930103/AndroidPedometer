@@ -1,4 +1,6 @@
-package com.lipy.step;
+package com.lipy.step.pedometer;
+
+import com.lipy.step.common.BaseApplication;
 
 import android.content.Context;
 

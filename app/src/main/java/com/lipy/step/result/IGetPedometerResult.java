@@ -1,4 +1,4 @@
-package com.lipy.step;
+package com.lipy.step.result;
 
 import com.lipy.step.dao.core.PedometerEntity;
 

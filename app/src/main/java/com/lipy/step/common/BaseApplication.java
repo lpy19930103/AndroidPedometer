@@ -1,5 +1,6 @@
-package com.lipy.step;
+package com.lipy.step.common;
 
+import com.lipy.step.pedometer.ApplicationModule;
 import com.lipy.step.dao.core.DaoMaster;
 import com.lipy.step.dao.core.DaoSession;
 
@@ -33,7 +34,6 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         ApplicationModule.initSingleton().onCreateMainProcess();
-        Log.e("lipy","onCreate");
         setDatabase(getAppContext());
     }
 
@@ -91,7 +91,6 @@ public class BaseApplication extends Application {
         db = mHelper.getWritableDatabase();
         mDaoMaster = new DaoMaster(db);
         mDaoSession = mDaoMaster.newSession();
-        Log.e("lipy","mHelper:"+mHelper+"db:"+db+"mDaoMaster:"+mDaoMaster+"mDaoSession:"+mDaoSession+"mDaoSession.getPedometerEntityDao()"+mDaoSession.getPedometerEntityDao());
     }
 
     public DaoSession getDaoSession() {
