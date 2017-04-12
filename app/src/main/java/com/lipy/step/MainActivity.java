@@ -2,7 +2,8 @@ package com.lipy.step;
 
 import com.lipy.step.common.BaseApplication;
 import com.lipy.step.common.PedometerEvent;
-import com.lipy.step.dao.core.PedometerEntity;
+import com.lipy.step.dao.PedometerEntity;
+import com.lipy.step.dao.PedometerEntityDao;
 import com.lipy.step.pedometer.ApplicationModule;
 import com.lipy.step.pedometer.PedometerRepository;
 import com.lipy.step.result.IGetPedometerResult;
@@ -11,21 +12,22 @@ import com.lipy.step.utils.HardwarePedometerUtil;
 
 import org.greenrobot.eventbus.Subscribe;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.TextView;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btnStart;
     TextView tvSteps;
 
     TextView tvAccelerometer;
     TextView tvStepCounter;
     TextView tvTargetSteps;
-    private boolean mIsStart = false;
+    TextView sdkVer;
 
     private PedometerRepository mPedometerRepository;
 
@@ -36,29 +38,15 @@ public class MainActivity extends AppCompatActivity {
         tvAccelerometer = (TextView) findViewById(R.id.tv_accelerometer);
         tvStepCounter = (TextView) findViewById(R.id.tv_step_counter);
         tvTargetSteps = (TextView) findViewById(R.id.tv_target_steps);
+        sdkVer = (TextView) findViewById(R.id.tv_sdk_v);
         tvSteps = (TextView) findViewById(R.id.tv_steps);
-//        btnStart = (Button) findViewById(R.id.btn_start);
-//        btnStart.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (!mIsStart) {
-//                    mIsStart = true;
-//                    ApplicationModule.getInstance().getPedometerManager().startPedometerService();
-//                    btnStart.setText("停止计步");
-//                } else {
-//                    mIsStart = false;
-//                    ApplicationModule.getInstance().getPedometerManager().stopPedometerService();
-//                    btnStart.setText("开始计步");
-//                }
-//
-//            }
-//        });
         init();
         ApplicationModule.getInstance().getPedometerManager().checkServiceStart();
         ApplicationModule.getInstance().getPedometerManager().setPedometerUpDateResult(new PedometerUpDateResult() {
             @Override
-            public void onPedometerUpDate(int count) {
-                tvSteps.setText(count + "步");
+            public void onPedometerUpDate(PedometerEntity entity) {
+                tvSteps.setText(entity.getDailyStep() + "步");
+                tvTargetSteps.setText("日期：" + entity.getDate());
             }
         });
     }
@@ -85,13 +73,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        BaseApplication.getInstances().setDatabase(this);
-//        PedometerEntityDao pedometerEntityDao = BaseApplication.getInstances().getDaoSession().getPedometerEntityDao();
-//        if (pedometerEntityDao != null) {
-//            PedometerEntity pedometerEntity = pedometerEntityDao.loadAll().get(pedometerEntityDao.loadAll().size() - 1);
-//            tvSteps.setText(pedometerEntity.getTargetStepCount() + "步");
-//            tvTargetSteps.setText("日期：" + pedometerEntity.getDate() );
-//        }
+        sdkVer.setText("" + Build.VERSION.SDK_INT);
+        BaseApplication.getInstances().setDatabase(this);
+        PedometerEntityDao pedometerEntityDao = BaseApplication.getInstances().getDaoSession().getPedometerEntityDao();
+        List<PedometerEntity> pedometerEntities = pedometerEntityDao.loadAll();
+        if (pedometerEntityDao != null && pedometerEntities != null && pedometerEntities.size() > 0) {
+            PedometerEntity pedometerEntity = pedometerEntities.get(pedometerEntities.size() - 1);
+            tvSteps.setText(pedometerEntity.getDailyStep() + "步");
+            tvTargetSteps.setText("日期：" + pedometerEntity.getDate());
+        }
     }
 
     /**
@@ -103,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccessGet(PedometerEntity cardEntity) {
                 if (cardEntity != null) {
-                    tvSteps.setText(cardEntity.getStepCount() + "步");
+                    tvSteps.setText(cardEntity.getDailyStep() + "步");
 //                    tvTargetSteps.setText("目标步数：" + cardEntity.getTargetStepCount() + "步");
                 }
             }

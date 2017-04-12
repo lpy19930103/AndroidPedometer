@@ -1,6 +1,6 @@
 package com.lipy.step.result;
 
-import com.lipy.step.dao.core.PedometerEntity;
+import com.lipy.step.dao.PedometerEntity;
 
 /**
  * Created by lipy on 2017/4/10 0010.

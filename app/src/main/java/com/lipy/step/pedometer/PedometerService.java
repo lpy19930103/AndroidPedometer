@@ -1,6 +1,7 @@
 package com.lipy.step.pedometer;
 
 import com.lipy.step.common.BaseApplication;
+import com.lipy.step.dao.PedometerEntity;
 import com.lipy.step.result.PedometerUpDateListener;
 import com.lipy.step.utils.HardwarePedometerUtil;
 
@@ -33,7 +34,7 @@ public class PedometerService extends Service {
 
     private Messenger clientMessenger = null;
 
-    private int mCount = 0;
+    private PedometerEntity mPedometerEntity ;
 
 
 
@@ -47,11 +48,11 @@ public class PedometerService extends Service {
                 if (clientMessenger == null) {
                     clientMessenger = msg.replyTo;//这个Message是在客户端中创建的
                 }
-                if (clientMessenger != null) {
+                if (clientMessenger != null && mPedometerEntity != null) {
                     Message msgToClient = Message.obtain();
                     msgToClient.what = SEND_MESSAGE_CODE;
                     Bundle bundle = new Bundle();
-                    bundle.putInt("msg", mCount);
+                    bundle.putSerializable("msg", mPedometerEntity);
                     msgToClient.setData(bundle);
                     try {
                         clientMessenger.send(msgToClient);
@@ -82,11 +83,9 @@ public class PedometerService extends Service {
         mPedometerRepositoryIml.initData();
         mPedometerRepositoryIml.setPedometerUpDateListener(new PedometerUpDateListener() {
             @Override
-            public void PedometerUpDate(int count) {
-                mCount = count;
-//                msg.what = RECEIVE_MESSAGE_CODE;
-//                msg.obj = count;
-                Log.e("lipy", "PedometerUpDate= " + count);
+            public void PedometerUpDate(PedometerEntity pedometerEntity) {
+                mPedometerEntity = pedometerEntity;
+//                Log.e("lipy", "PedometerUpDate= " + pedometerEntity.getTargetStepCount());
                 serviceHandler.sendEmptyMessage(RECEIVE_MESSAGE_CODE);
             }
         });

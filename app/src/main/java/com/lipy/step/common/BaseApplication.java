@@ -1,7 +1,7 @@
 package com.lipy.step.common;
 
-import com.lipy.step.dao.core.DaoMaster;
-import com.lipy.step.dao.core.DaoSession;
+import com.lipy.step.dao.DaoMaster;
+import com.lipy.step.dao.DaoSession;
 import com.lipy.step.pedometer.ApplicationModule;
 
 import org.greenrobot.eventbus.EventBus;

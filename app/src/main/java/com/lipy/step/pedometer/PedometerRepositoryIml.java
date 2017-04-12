@@ -2,8 +2,8 @@ package com.lipy.step.pedometer;
 
 import com.lipy.step.common.BaseApplication;
 import com.lipy.step.common.PedometerEvent;
-import com.lipy.step.dao.core.PedometerEntity;
-import com.lipy.step.dao.core.PedometerEntityDao;
+import com.lipy.step.dao.PedometerEntity;
+import com.lipy.step.dao.PedometerEntityDao;
 import com.lipy.step.result.IGetPedometerResult;
 import com.lipy.step.result.PedometerUpDateListener;
 import com.lipy.step.utils.TimeUtil;
@@ -40,6 +40,8 @@ public class PedometerRepositoryIml implements SensorEventListener, PedometerRep
     private static long end = 0;
     private static long start = 0;
 
+    private static boolean isShutdown = false;
+
     /**
      * 最后加速度方向
      */
@@ -55,6 +57,8 @@ public class PedometerRepositoryIml implements SensorEventListener, PedometerRep
     private static int TODAY_ENTITY_STEPS;
     private List<PedometerEntity> mPedometerEntities;
     private PedometerEntityDao mPedometerEntityDao;
+    private PedometerEntity mYesterdayPedometerEntity;
+    private int allStep = 0;
 
 
     public PedometerRepositoryIml() {
@@ -96,6 +100,7 @@ public class PedometerRepositoryIml implements SensorEventListener, PedometerRep
 
         synchronized (this) {
             if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+                allStep = (int) event.values[0];
                 if (mPedometerEntityDao == null) {
                     BaseApplication.getInstances().setDatabase(mContext);
                     mPedometerEntityDao = BaseApplication.getInstances().getDaoSession().getPedometerEntityDao();
@@ -108,51 +113,65 @@ public class PedometerRepositoryIml implements SensorEventListener, PedometerRep
                     if (!TextUtils.isEmpty(date)) {
                         if (TimeUtil.IsToday(date)) {
                             mTodayStepEntity = pedometerEntity;
-                            Log.e("lipy", "是同一天 复用今天的Entity= " + mPedometerEntityDao.loadAll().size());
-                        } else if (TimeUtil.IsYesterday(date)) {
-                            Log.e("lipy", "是昨天 创建新的Entity= " + mPedometerEntityDao.loadAll().size());
-                            mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, 0, 0);
+                            Log.e("lipy", "还是今天 复用今天的Entity");
+                        } else if (TimeUtil.IsYesterday(date) && mPedometerEntities.size() > 1) {
+                            Log.e("lipy", "是昨天 创建新的Entity ");
+                            mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, mPedometerEntities.get(mPedometerEntities.size() - 2).getTotalSteps(), 0);
                             mPedometerEntityDao.insert(mTodayStepEntity);
                         }
                     }
                 } else {
-                    mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, 1, (int) event.values[0]));
-                    mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, 0, 0);
+                    mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, allStep, 0));
+                    mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, allStep, 0);
                     mPedometerEntityDao.insert(mTodayStepEntity);
                     Log.e("lipy", "第一次安装创建2个Entity=  " + mPedometerEntityDao.loadAll().size());
 
                 }
-
+                mPedometerEntities = mPedometerEntityDao.loadAll();
                 if (TimeUtil.getStringDateShort().equals(mTodayStepEntity.getDate())) {
-                    if (mPedometerEntities.size() > 1) {
-                        if (!TimeUtil.IsYesterday(mTodayStepEntity.getDate())) {
-                            PedometerEntity pedometerEntity = mPedometerEntities.get(mPedometerEntities.size() - 2);
-                            mTodayStepEntity.setTargetStepCount((int) event.values[0] - pedometerEntity.getTargetStepCount());
-                            Log.e("lipy", "更新步数 = " + mTodayStepEntity.getTargetStepCount());
+                    if (mPedometerEntities.size() > 1 && !TimeUtil.IsYesterday(mTodayStepEntity.getDate())) {
+                        if (mYesterdayPedometerEntity == null) {
+                            mYesterdayPedometerEntity = mPedometerEntities.get(mPedometerEntities.size() - 2);
                         }
+                        int dailyStep;
+                        if (allStep < mYesterdayPedometerEntity.getTotalSteps()) {
+                            isShutdown = true;
+                            allStep += mYesterdayPedometerEntity.getTotalSteps();
+                            dailyStep = allStep - mYesterdayPedometerEntity.getTotalSteps();
+                        } else {
+                            if (isShutdown) {
+                                dailyStep = mTodayStepEntity.getDailyStep() + allStep - mYesterdayPedometerEntity.getTotalSteps();
+                            } else {
+                                dailyStep = allStep - mYesterdayPedometerEntity.getTotalSteps();
+                            }
+                        }
+                        mTodayStepEntity.setTotalSteps(allStep);
+                        mTodayStepEntity.setDailyStep(dailyStep);
+                        Log.e("lipy", "更新步数 = " + mTodayStepEntity.getDailyStep());
                     }
+
                 }
 
                 mPedometerEntityDao.update(mTodayStepEntity);
 
                 if (mPedometerUpDateListener != null) {
-                    mPedometerUpDateListener.PedometerUpDate(mTodayStepEntity.getTargetStepCount());
+                    mPedometerUpDateListener.PedometerUpDate(mTodayStepEntity);
                 }
-
-                Log.e("lipy", "当日步数 " + mTodayStepEntity.getTargetStepCount());
+                Log.e("lipy", "昨日步数 " + mYesterdayPedometerEntity.getDailyStep());
+                Log.e("lipy", "统计天数 " + mPedometerEntityDao.loadAll().size());
+                Log.e("lipy", "当日步数 " + mTodayStepEntity.getDailyStep());
+                Log.e("lipy", "总步数 " + mTodayStepEntity.getTotalSteps());
 
                 // Step Counter，要准确很多,读取开机的传感器步数
-                Log.i("lipy", "FIRST_STEP_COUNT =" + FIRST_STEP_COUNT);
+//                Log.i("lipy", "FIRST_STEP_COUNT =" + FIRST_STEP_COUNT);
 
                 if (FIRST_STEP_COUNT == 0) {
-
                     FIRST_STEP_COUNT = (int) event.values[0];
-
-                    Log.i("lipy", "FIRST_STEP_COUNT =" + FIRST_STEP_COUNT);
+//                    Log.i("lipy", "FIRST_STEP_COUNT =" + FIRST_STEP_COUNT);
                 } else {
                     CURRENT_STEP = Math.abs((int) event.values[0] - FIRST_STEP_COUNT);
                     showSteps(CURRENT_STEP);
-                    Log.i("lipy", "CURRENT_STEP = " + CURRENT_STEP);
+//                    Log.i("lipy", "CURRENT_STEP = " + CURRENT_STEP);
                 }
             } else if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {//加速度
                 if (mAccelerometerMode == 1) {
@@ -224,9 +243,9 @@ public class PedometerRepositoryIml implements SensorEventListener, PedometerRep
         }
         steps = steps + TODAY_ENTITY_STEPS;
 
-        Log.i("lipy", "<PedometerRepositoryIml> showSteps TODAY_ENTITY_STEPS= " + TODAY_ENTITY_STEPS + " steps = " + steps);
+//        Log.i("lipy", "<PedometerRepositoryIml> showSteps TODAY_ENTITY_STEPS= " + TODAY_ENTITY_STEPS + " steps = " + steps);
 
-        mTodayStepEntity.setStepCount(steps);
+        mTodayStepEntity.setDailyStep(steps);
 
         PedometerEvent event = new PedometerEvent();
         event.mIsUpdate = true;

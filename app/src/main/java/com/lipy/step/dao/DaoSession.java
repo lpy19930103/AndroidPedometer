@@ -1,4 +1,4 @@
-package com.lipy.step.dao.core;
+package com.lipy.step.dao;
 
 import android.database.sqlite.SQLiteDatabase;
 

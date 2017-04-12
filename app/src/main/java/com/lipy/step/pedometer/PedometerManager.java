@@ -1,6 +1,7 @@
 package com.lipy.step.pedometer;
 
 import com.lipy.step.common.BaseApplication;
+import com.lipy.step.dao.PedometerEntity;
 import com.lipy.step.result.PedometerUpDateResult;
 import com.lipy.step.utils.HardwarePedometerUtil;
 
@@ -136,9 +137,9 @@ public class PedometerManager {
             if (msg.what == RECEIVE_MESSAGE_CODE) {
                 Bundle data = msg.getData();
                 if (data != null) {
-                    int count = data.getInt("msg");
-                    if (mPedometerUpDateResult != null){
-                        mPedometerUpDateResult.onPedometerUpDate(count);
+                    PedometerEntity entity = (PedometerEntity) data.getSerializable("msg");
+                    if (mPedometerUpDateResult != null) {
+                        mPedometerUpDateResult.onPedometerUpDate(entity);
                     }
                 }
             }
