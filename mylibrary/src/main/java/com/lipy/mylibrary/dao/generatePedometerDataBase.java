@@ -12,13 +12,13 @@ public class generatePedometerDataBase {
         Schema schema = new Schema(1, "com.lipy.mylibrary.dao.core");
         schema.enableKeepSectionsByDefault();
 
-        addPedometerCard(schema);
+        addPedometer(schema);
         new DaoGenerator().generateAll(schema, "E:/project/AndroidPedometer/mylibrary/src/main/java/");
 
     }
 
     //计步
-    private static void addPedometerCard(Schema schema) {
+    private static void addPedometer(Schema schema) {
         PedometerCard = schema.addEntity("PedometerEntity");
         PedometerCard.setTableName("PedometerLog");
         //默认的id自主增加
@@ -32,10 +32,14 @@ public class generatePedometerDataBase {
 //        PedometerCard.addDoubleProperty("distanceInMeters");
         //开机后总步数
         PedometerCard.addIntProperty("totalSteps");
-        //是否完成了目标值，0未完成，1完成
-        PedometerCard.addIntProperty("status");
+
+        PedometerCard.addIntProperty("tagStep");
+        //是否重启手机重置，0重置，1未重置
+        PedometerCard.addBooleanProperty("restart");
 
 
     }
+
+
 
 }

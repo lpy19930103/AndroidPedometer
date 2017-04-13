@@ -25,8 +25,9 @@ public class PedometerEntityDao extends AbstractDao<PedometerEntity, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Date = new Property(1, String.class, "date", false, "DATE");
         public final static Property DailyStep = new Property(2, Integer.class, "dailyStep", false, "DAILY_STEP");
-        public final static Property Status = new Property(3, Integer.class, "status", false, "STATUS");
-        public final static Property TotalSteps = new Property(4, Integer.class, "totalSteps", false, "TOTAL_STEPS");
+        public final static Property TotalSteps = new Property(3, Integer.class, "totalSteps", false, "TOTAL_STEPS");
+        public final static Property TagStep = new Property(4, Integer.class, "tagStep", false, "TAG_STEP");
+        public final static Property Restart = new Property(5, Boolean.class, "restart", false, "RESTART");
     };
 
 
@@ -45,8 +46,9 @@ public class PedometerEntityDao extends AbstractDao<PedometerEntity, Long> {
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"DATE\" TEXT NOT NULL ," + // 1: date
                 "\"DAILY_STEP\" INTEGER," + // 2: dailyStep
-                "\"STATUS\" INTEGER," + // 3: status
-                "\"TOTAL_STEPS\" INTEGER);"); // 4: totalSteps
+                "\"TOTAL_STEPS\" INTEGER," + // 3: totalSteps
+                "\"TAG_STEP\" INTEGER," + // 4: tagStep
+                "\"RESTART\" INTEGER);"); // 5: restart
     }
 
     /** Drops the underlying database table. */
@@ -71,14 +73,19 @@ public class PedometerEntityDao extends AbstractDao<PedometerEntity, Long> {
             stmt.bindLong(3, dailyStep);
         }
  
-        Integer status = entity.getStatus();
-        if (status != null) {
-            stmt.bindLong(4, status);
-        }
- 
         Integer totalSteps = entity.getTotalSteps();
         if (totalSteps != null) {
-            stmt.bindLong(5, totalSteps);
+            stmt.bindLong(4, totalSteps);
+        }
+ 
+        Integer tagStep = entity.getTagStep();
+        if (tagStep != null) {
+            stmt.bindLong(5, tagStep);
+        }
+ 
+        Boolean restart = entity.getRestart();
+        if (restart != null) {
+            stmt.bindLong(6, restart ? 1L: 0L);
         }
     }
 
@@ -95,8 +102,9 @@ public class PedometerEntityDao extends AbstractDao<PedometerEntity, Long> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.getString(offset + 1), // date
             cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2), // dailyStep
-            cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // status
-            cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4) // totalSteps
+            cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // totalSteps
+            cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // tagStep
+            cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0 // restart
         );
         return entity;
     }
@@ -107,8 +115,9 @@ public class PedometerEntityDao extends AbstractDao<PedometerEntity, Long> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setDate(cursor.getString(offset + 1));
         entity.setDailyStep(cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2));
-        entity.setStatus(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
-        entity.setTotalSteps(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
+        entity.setTotalSteps(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
+        entity.setTagStep(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
+        entity.setRestart(cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0);
      }
     
     /** @inheritdoc */

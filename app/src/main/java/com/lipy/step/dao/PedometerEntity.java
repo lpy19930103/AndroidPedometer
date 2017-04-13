@@ -16,8 +16,9 @@ public class PedometerEntity implements Serializable{
     /** Not-null value. */
     private String date;
     private Integer dailyStep;
-    private Integer status;
     private Integer totalSteps;
+    private Integer tagStep;
+    private Boolean restart;
 
     // KEEP FIELDS - put your custom fields here
     // KEEP FIELDS END
@@ -29,12 +30,13 @@ public class PedometerEntity implements Serializable{
         this.id = id;
     }
 
-    public PedometerEntity(Long id, String date, Integer dailyStep,Integer totalSteps, Integer status) {
+    public PedometerEntity(Long id, String date, Integer dailyStep, Integer totalSteps, Integer tagStep, boolean restart) {
         this.id = id;
         this.date = date;
         this.dailyStep = dailyStep;
-        this.status = status;
         this.totalSteps = totalSteps;
+        this.tagStep = tagStep;
+        this.restart = restart;
     }
 
     public Long getId() {
@@ -63,20 +65,28 @@ public class PedometerEntity implements Serializable{
         this.dailyStep = dailyStep;
     }
 
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
     public Integer getTotalSteps() {
         return totalSteps;
     }
 
     public void setTotalSteps(Integer totalSteps) {
         this.totalSteps = totalSteps;
+    }
+
+    public Integer getTagStep() {
+        return tagStep;
+    }
+
+    public void setTagStep(Integer tagStep) {
+        this.tagStep = tagStep;
+    }
+
+    public Boolean getRestart() {
+        return restart;
+    }
+
+    public void setRestart(Boolean restart) {
+        this.restart = restart;
     }
 
     // KEEP METHODS - put your custom methods here
