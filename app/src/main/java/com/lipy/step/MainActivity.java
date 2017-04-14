@@ -9,15 +9,18 @@ import com.lipy.step.pedometer.PedometerRepository;
 import com.lipy.step.result.IGetPedometerResult;
 import com.lipy.step.result.PedometerUpDateResult;
 import com.lipy.step.utils.HardwarePedometerUtil;
+import com.lipy.step.utils.PermissionUtils;
 
 import org.greenrobot.eventbus.Subscribe;
 
+import android.Manifest;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
     private PedometerRepository mPedometerRepository;
 
+    private List<String> permissions = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +45,17 @@ public class MainActivity extends AppCompatActivity {
         tvTargetSteps = (TextView) findViewById(R.id.tv_target_steps);
         sdkVer = (TextView) findViewById(R.id.tv_sdk_v);
         tvSteps = (TextView) findViewById(R.id.tv_steps);
+        permissions.add(Manifest.permission.BODY_SENSORS);
+        permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        PermissionUtils.requestMultiPermissions(this, permissions, new PermissionUtils.PermissionGrant() {
+                    @Override
+                    public void onPermissionGranted(String requestPermission) {
+
+                    }
+                }
+        );
+
+
         init();
         ApplicationModule.getInstance().getPedometerManager().checkServiceStart();
         ApplicationModule.getInstance().getPedometerManager().setPedometerUpDateResult(new PedometerUpDateResult() {

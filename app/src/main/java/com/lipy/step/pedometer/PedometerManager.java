@@ -23,14 +23,25 @@ import android.util.Log;
  * Created by lipy on 2017/4/10 0010.
  */
 public class PedometerManager {
-    public static final int MSG_SAY_HELLO = 0;
     public boolean IsServiceRunning = false;
-    public static int SAY_HELLO_TO_CLIENT = 1;
+
     private Context mContext;
 
     private Intent mService;
+
     private static String PACKAGE_SERVICE = "com.lipy.step.pedometer";
+
     private static String NAME_SERVICE = "PedometerService";
+
+    private static final int SEND_MESSAGE_CODE = 0x0001;
+
+    private static final int RECEIVE_MESSAGE_CODE = 0x0002;
+
+    private PedometerUpDateResult mPedometerUpDateResult;
+
+    private Messenger serviceMessenger = null;
+
+    private Messenger clientMessenger = new Messenger(new ClientHandler());
 
 
     public PedometerManager() {
@@ -62,7 +73,7 @@ public class PedometerManager {
     }
 
     /**
-     * 1、停止记步服务；2、删除当天数据
+     * 1、停止记步服务；
      */
     public void stopPedometerService() {
         IsServiceRunning = false;
@@ -88,7 +99,7 @@ public class PedometerManager {
                 }
             }
 
-            Log.i("lipy", "<PedometerManager> checkServiceStart mIsServiceRunning = " + IsServiceRunning);
+            Log.i("lipy", "checkServiceStart mIsServiceRunning = " + IsServiceRunning);
 
             if (!IsServiceRunning) {
                 startPedometerService();
@@ -96,14 +107,6 @@ public class PedometerManager {
         }
 
     }
-
-    private static final int SEND_MESSAGE_CODE = 0x0001;
-    private static final int RECEIVE_MESSAGE_CODE = 0x0002;
-    private PedometerUpDateResult mPedometerUpDateResult;
-
-    private Messenger serviceMessenger = null;
-
-    private Messenger clientMessenger = new Messenger(new ClientHandler());
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
 
@@ -114,7 +117,7 @@ public class PedometerManager {
             Message msg = Message.obtain();
             msg.what = SEND_MESSAGE_CODE;
             Bundle data = new Bundle();
-            data.putString("msg", "你好，MyService，我是客户端");
+            data.putString("msg", "Hello，Service");
             msg.setData(data);
             msg.replyTo = clientMessenger;
             try {

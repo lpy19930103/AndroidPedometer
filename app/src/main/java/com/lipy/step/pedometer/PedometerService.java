@@ -24,8 +24,13 @@ import android.util.Log;
  * Created by lipy on 2017/4/10 0010.
  */
 public class PedometerService extends Service {
+
+    private static String TAG = "PedometerService";
+
     private Context mContext;
+
     private SensorManager mSensorManager;  // 传感器服务
+
     private PedometerCore mPedometerCore;  // 传感器监听对象
 
     private static final int RECEIVE_MESSAGE_CODE = 0x0001;
@@ -34,8 +39,7 @@ public class PedometerService extends Service {
 
     private Messenger clientMessenger = null;
 
-    private PedometerEntity mPedometerEntity ;
-
+    private PedometerEntity mPedometerEntity;
 
 
     //实现一个能够处理接收信息的Handler
@@ -44,7 +48,7 @@ public class PedometerService extends Service {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == RECEIVE_MESSAGE_CODE) {
-                Log.e("lipy", "RECEIVE_MESSAGE_CODE");
+                Log.i(TAG, "PedometerService serviceHandler");
                 if (clientMessenger == null) {
                     clientMessenger = msg.replyTo;//这个Message是在客户端中创建的
                 }
@@ -78,14 +82,14 @@ public class PedometerService extends Service {
     public void onCreate() {
         super.onCreate();
         mContext = BaseApplication.getAppContext();
-        Log.e("lipy", "PedometerService onCreate");
+        Log.i(TAG, "PedometerService onCreate");
         mPedometerCore = ApplicationModule.getInstance().getPedometerRepository();
         mPedometerCore.initData();
         mPedometerCore.setPedometerUpDateListener(new PedometerUpDateListener() {
             @Override
             public void PedometerUpDate(PedometerEntity pedometerEntity) {
                 mPedometerEntity = pedometerEntity;
-//                Log.e("lipy", "PedometerUpDate= " + pedometerEntity.getTargetStepCount());
+//                Log.e(TAG, "PedometerUpDate= " + pedometerEntity.getTargetStepCount());
                 serviceHandler.sendEmptyMessage(RECEIVE_MESSAGE_CODE);
             }
         });
@@ -105,7 +109,7 @@ public class PedometerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("lipy", "PedometerService onStartCommand");
+        Log.i(TAG, "PedometerService onStartCommand");
 
         return START_STICKY;
     }
@@ -113,7 +117,7 @@ public class PedometerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i("lipy", "PedometerService onDestroy");
+        Log.i(TAG, "PedometerService onDestroy");
         if (mPedometerCore != null) {
             mPedometerCore.onDestroy();
             mSensorManager.unregisterListener(mPedometerCore);
