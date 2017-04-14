@@ -25,29 +25,29 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView tvSteps;
+    TextView mTvSteps;
 
-    TextView tvAccelerometer;
-    TextView tvStepCounter;
-    TextView tvTargetSteps;
-    TextView sdkVer;
+    TextView mTvAccelerometer;
+    TextView mTvStepCounter;
+    TextView mTvTargetSteps;
+    TextView mSdkVer;
 
     private PedometerRepository mPedometerRepository;
 
-    private List<String> permissions = new ArrayList<>();
+    private List<String> mPermissions = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tvAccelerometer = (TextView) findViewById(R.id.tv_accelerometer);
-        tvStepCounter = (TextView) findViewById(R.id.tv_step_counter);
-        tvTargetSteps = (TextView) findViewById(R.id.tv_target_steps);
-        sdkVer = (TextView) findViewById(R.id.tv_sdk_v);
-        tvSteps = (TextView) findViewById(R.id.tv_steps);
-        permissions.add(Manifest.permission.BODY_SENSORS);
-        permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        PermissionUtils.requestMultiPermissions(this, permissions, new PermissionUtils.PermissionGrant() {
+        mTvAccelerometer = (TextView) findViewById(R.id.tv_accelerometer);
+        mTvStepCounter = (TextView) findViewById(R.id.tv_step_counter);
+        mTvTargetSteps = (TextView) findViewById(R.id.tv_target_steps);
+        mSdkVer = (TextView) findViewById(R.id.tv_sdk_v);
+        mTvSteps = (TextView) findViewById(R.id.tv_steps);
+        mPermissions.add(Manifest.permission.BODY_SENSORS);
+        mPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        PermissionUtils.requestMultiPermissions(this, mPermissions, new PermissionUtils.PermissionGrant() {
                     @Override
                     public void onPermissionGranted(String requestPermission) {
 
@@ -61,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
         ApplicationModule.getInstance().getPedometerManager().setPedometerUpDateResult(new PedometerUpDateResult() {
             @Override
             public void onPedometerUpDate(PedometerEntity entity) {
-                tvSteps.setText(entity.getDailyStep() + "步");
-                tvTargetSteps.setText("日期：" + entity.getDate());
+                mTvSteps.setText(entity.getDailyStep() + "步");
+                mTvTargetSteps.setText("日期：" + entity.getDate());
             }
         });
     }
@@ -73,15 +73,15 @@ public class MainActivity extends AppCompatActivity {
         getPedometerStep();
 
         if (HardwarePedometerUtil.supportsHardwareAccelerometer(this)) {
-            tvAccelerometer.setText("是");
+            mTvAccelerometer.setText("是");
         } else {
-            tvAccelerometer.setText("否");
+            mTvAccelerometer.setText("否");
         }
 
         if (HardwarePedometerUtil.supportsHardwareStepCounter(this)) {
-            tvStepCounter.setText("是");
+            mTvStepCounter.setText("是");
         } else {
-            tvStepCounter.setText("否");
+            mTvStepCounter.setText("否");
         }
 
     }
@@ -89,14 +89,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        sdkVer.setText("" + Build.VERSION.SDK_INT);
+        mSdkVer.setText("" + Build.VERSION.SDK_INT);
         BaseApplication.getInstances().setDatabase(this);
         PedometerEntityDao pedometerEntityDao = BaseApplication.getInstances().getDaoSession().getPedometerEntityDao();
         List<PedometerEntity> pedometerEntities = pedometerEntityDao.loadAll();
         if (pedometerEntityDao != null && pedometerEntities != null && pedometerEntities.size() > 0) {
             PedometerEntity pedometerEntity = pedometerEntities.get(pedometerEntities.size() - 1);
-            tvSteps.setText(pedometerEntity.getDailyStep() + "步");
-            tvTargetSteps.setText("日期：" + pedometerEntity.getDate());
+            mTvSteps.setText(pedometerEntity.getDailyStep() + "步");
+            mTvTargetSteps.setText("日期：" + pedometerEntity.getDate());
         }
     }
 
@@ -109,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccessGet(PedometerEntity cardEntity) {
                 if (cardEntity != null) {
-                    tvSteps.setText(cardEntity.getDailyStep() + "步");
-//                    tvTargetSteps.setText("目标步数：" + cardEntity.getTargetStepCount() + "步");
+                    mTvSteps.setText(cardEntity.getDailyStep() + "步");
+//                    mTvTargetSteps.setText("目标步数：" + cardEntity.getTargetStepCount() + "步");
                 }
             }
         });

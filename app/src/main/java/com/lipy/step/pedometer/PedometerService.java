@@ -37,7 +37,7 @@ public class PedometerService extends Service {
 
     private static final int SEND_MESSAGE_CODE = 0x0002;
 
-    private Messenger clientMessenger = null;
+    private Messenger mClientMessenger = null;
 
     private PedometerEntity mPedometerEntity;
 
@@ -49,17 +49,17 @@ public class PedometerService extends Service {
             super.handleMessage(msg);
             if (msg.what == RECEIVE_MESSAGE_CODE) {
                 Log.i(TAG, "PedometerService serviceHandler");
-                if (clientMessenger == null) {
-                    clientMessenger = msg.replyTo;//这个Message是在客户端中创建的
+                if (mClientMessenger == null) {
+                    mClientMessenger = msg.replyTo;//这个Message是在客户端中创建的
                 }
-                if (clientMessenger != null && mPedometerEntity != null) {
+                if (mClientMessenger != null && mPedometerEntity != null) {
                     Message msgToClient = Message.obtain();
                     msgToClient.what = SEND_MESSAGE_CODE;
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("msg", mPedometerEntity);
                     msgToClient.setData(bundle);
                     try {
-                        clientMessenger.send(msgToClient);
+                        mClientMessenger.send(msgToClient);
 
                     } catch (RemoteException e) {
                         e.printStackTrace();
