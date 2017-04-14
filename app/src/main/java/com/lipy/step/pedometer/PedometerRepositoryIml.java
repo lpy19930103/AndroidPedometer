@@ -36,6 +36,8 @@ public class PedometerRepositoryIml implements SensorEventListener, PedometerRep
     private PedometerEntityDao mPedometerEntityDao;
     private PedometerEntity mYesterdayPedometerEntity;
     private int allStep = 0;
+    private int next = 0;
+    private boolean nextB = true;
 
 
     public PedometerRepositoryIml() {
@@ -72,20 +74,20 @@ public class PedometerRepositoryIml implements SensorEventListener, PedometerRep
                 mPedometerEntityDao = BaseApplication.getInstances().getDaoSession().getPedometerEntityDao();
             }
 
-
             if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+
                 allStep = (int) event.values[0];
+                CURRENT_STEP = allStep - next;
 
                 Log.e("lipy", "**************************Date =" + TimeUtil.getStringDateShort());
                 Log.e("lipy", "FIRST_STEP_COUNT = " + allStep);
+                Log.e("lipy", "next = " + next);
+                Log.e("lipy", "CURRENT_STEP = " + CURRENT_STEP);
 
 
                 mPedometerEntities = mPedometerEntityDao.loadAll();
-
                 if (mPedometerEntities != null && mPedometerEntities.size() > 0) {
-
                     PedometerEntity pedometerEntity = mPedometerEntities.get(mPedometerEntities.size() - 1);
-
                     String date = pedometerEntity.getDate();
                     if (!TextUtils.isEmpty(date)) {
                         if (TimeUtil.IsToday(date)) {
@@ -127,24 +129,22 @@ public class PedometerRepositoryIml implements SensorEventListener, PedometerRep
                         Log.e("lipy", "纠正总步数1 = " + allStep);
 
                         if (mTodayStepEntity.getTotalSteps() > allStep) {
-                            allStep += mTodayStepEntity.getTotalSteps();
-                            if (mTodayStepEntity.getTagStep() == 0) {
-                                mTodayStepEntity.setTagStep((int) event.values[0]);
+                            if (next != 0 || CURRENT_STEP != 0) {
+                                allStep = mTodayStepEntity.getTotalSteps() + CURRENT_STEP;
                             } else {
-                                allStep = allStep - mTodayStepEntity.getTagStep();
+                                allStep += mTodayStepEntity.getTotalSteps();
                             }
+
                             Log.e("lipy", "纠正总步数2 = " + allStep);
                         }
                     } else if (mTodayStepEntity.getRestart()) {//当前是重启状态
 
-                        if (mTodayStepEntity.getTagStep() == 0) {
-                            mTodayStepEntity.setTagStep((int) event.values[0]);
+                        if (next != 0 || CURRENT_STEP != 0) {
+                            allStep = mTodayStepEntity.getTotalSteps() + CURRENT_STEP;
                         } else {
-                            allStep = allStep - mTodayStepEntity.getTagStep();
+                            allStep += mTodayStepEntity.getTotalSteps();
                         }
-
-                        allStep = mTodayStepEntity.getDailyStep() + mYesterdayPedometerEntity.getTotalSteps();
-                        Log.e("lipy", "关机状态 = " + "0".equals(mTodayStepEntity.getRestart()));
+                        Log.e("lipy", "关机状态 = " + mTodayStepEntity.getRestart());
                     }
 
                     dailyStep = allStep - mYesterdayPedometerEntity.getTotalSteps();//正常记步
@@ -163,7 +163,7 @@ public class PedometerRepositoryIml implements SensorEventListener, PedometerRep
             Log.e("lipy", "昨日总步数 " + mYesterdayPedometerEntity.getTotalSteps());
             Log.e("lipy", "总步数 " + mTodayStepEntity.getTotalSteps());
             Log.e("lipy", "统计天数 " + mPedometerEntityDao.loadAll().size());
-
+            next = (int) event.values[0];
         }
     }
 
@@ -182,9 +182,7 @@ public class PedometerRepositoryIml implements SensorEventListener, PedometerRep
         }
         steps = steps + TODAY_ENTITY_STEPS;
 
-//        Log.i("lipy", "<PedometerRepositoryIml> showSteps TODAY_ENTITY_STEPS= " + TODAY_ENTITY_STEPS + " steps = " + steps);
-
-//        mTodayStepEntity.setDailyStep(steps);
+        mTodayStepEntity.setDailyStep(steps);
 
         PedometerEvent event = new PedometerEvent();
         event.mIsUpdate = true;
@@ -202,6 +200,7 @@ public class PedometerRepositoryIml implements SensorEventListener, PedometerRep
         mTodayStepEntity.setTagStep(0);
         mPedometerEntityDao.update(mTodayStepEntity);
         FIRST_STEP_COUNT = 0;
+        CURRENT_STEP = 0;
         mTodayStepEntity = null;
     }
 }
