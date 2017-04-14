@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         mTvSteps = (TextView) findViewById(R.id.tv_steps);
         mPermissions.add(Manifest.permission.BODY_SENSORS);
         mPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
         PermissionUtils.requestMultiPermissions(this, mPermissions, new PermissionUtils.PermissionGrant() {
                     @Override
                     public void onPermissionGranted(String requestPermission) {
