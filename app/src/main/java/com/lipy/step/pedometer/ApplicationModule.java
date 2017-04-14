@@ -13,7 +13,7 @@ public class ApplicationModule {
     private static ApplicationModule sInstance;
 
     private PedometerManager mPedometerManager;// 计步器管理类:通知和定时器等
-    private PedometerRepositoryIml mPedometerRepository;
+    private PedometerCore mPedometerRepository;
 
 
     /**
@@ -27,13 +27,14 @@ public class ApplicationModule {
         return sInstance;
     }
 
+
     public static ApplicationModule getInstance() {
         return sInstance;
     }
 
     public void onCreateMainProcess() {
         mPedometerManager = new PedometerManager();
-        mPedometerRepository = new PedometerRepositoryIml();
+        mPedometerRepository = new PedometerCore();
 
     }
 
@@ -47,7 +48,7 @@ public class ApplicationModule {
         return mPedometerManager;
     }
 
-    public PedometerRepositoryIml getPedometerRepository() {
+    public PedometerCore getPedometerRepository() {
         return mPedometerRepository;
     }
 

@@ -26,7 +26,7 @@ import android.util.Log;
 public class PedometerService extends Service {
     private Context mContext;
     private SensorManager mSensorManager;  // 传感器服务
-    private PedometerRepositoryIml mPedometerRepositoryIml;  // 传感器监听对象
+    private PedometerCore mPedometerCore;  // 传感器监听对象
 
     private static final int RECEIVE_MESSAGE_CODE = 0x0001;
 
@@ -79,9 +79,9 @@ public class PedometerService extends Service {
         super.onCreate();
         mContext = BaseApplication.getAppContext();
         Log.e("lipy", "PedometerService onCreate");
-        mPedometerRepositoryIml = ApplicationModule.getInstance().getPedometerRepository();
-        mPedometerRepositoryIml.initData();
-        mPedometerRepositoryIml.setPedometerUpDateListener(new PedometerUpDateListener() {
+        mPedometerCore = ApplicationModule.getInstance().getPedometerRepository();
+        mPedometerCore.initData();
+        mPedometerCore.setPedometerUpDateListener(new PedometerUpDateListener() {
             @Override
             public void PedometerUpDate(PedometerEntity pedometerEntity) {
                 mPedometerEntity = pedometerEntity;
@@ -95,10 +95,10 @@ public class PedometerService extends Service {
         mSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
 
         if (HardwarePedometerUtil.supportsHardwareStepCounter(mContext)) {
-            mSensorManager.registerListener(mPedometerRepositoryIml, mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER),
+            mSensorManager.registerListener(mPedometerCore, mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER),
                     SensorManager.SENSOR_DELAY_UI);
         } else if (HardwarePedometerUtil.supportsHardwareAccelerometer(mContext)) {
-            mSensorManager.registerListener(mPedometerRepositoryIml, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI);
+            mSensorManager.registerListener(mPedometerCore, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI);
         }
 
     }
@@ -114,10 +114,10 @@ public class PedometerService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.i("lipy", "PedometerService onDestroy");
-        if (mPedometerRepositoryIml != null) {
-            mPedometerRepositoryIml.onDestroy();
-            mSensorManager.unregisterListener(mPedometerRepositoryIml);
-            mPedometerRepositoryIml = null;
+        if (mPedometerCore != null) {
+            mPedometerCore.onDestroy();
+            mSensorManager.unregisterListener(mPedometerCore);
+            mPedometerCore = null;
         }
         mSensorManager = null;
         mContext = null;
