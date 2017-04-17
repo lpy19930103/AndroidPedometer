@@ -45,7 +45,7 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
 
     private PedometerEntity mYesterdayPedometerEntity;
 
-
+    private static int TAG_STEP = 5000;
 
 
     public PedometerCore() {
@@ -55,7 +55,8 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
     /**
      *  初始化传感器相关数据
      */
-    public void initData() {
+    public void initData(int tagStep) {
+        TAG_STEP = tagStep;
         CURRENT_STEP = 0;
         BaseApplication.getInstances().setDatabase(mContext);
         mPedometerEntityDao = BaseApplication.getInstances().getDaoSession().getPedometerEntityDao();
@@ -103,19 +104,30 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
                         } else if (TimeUtil.IsYesterday(date) && mPedometerEntities.size() > 1) {
                             Log.e(TAG, "是昨天 创建新的Entity ");
                             if (CURRENT_TOTAL_STEPS > mPedometerEntities.get(mPedometerEntities.size() - 2).getTotalSteps()) {
-                                mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, 0, false);
+                                mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false);
                             } else {
                                 mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS +
-                                        mPedometerEntities.get(mPedometerEntities.size() - 2).getTotalSteps(), 0, false);
+                                        mPedometerEntities.get(mPedometerEntities.size() - 2).getTotalSteps(), TAG_STEP, false);
 
                             }
                             mPedometerEntityDao.insert(mTodayStepEntity);
+                        } else if (mPedometerEntities.size() > 1){
+                            //// TODO: 2017/4/17 0017  中间间隔数天的情况需要处理 mTodayStepEntity会为null
+                            if (CURRENT_TOTAL_STEPS > mPedometerEntities.get(mPedometerEntities.size() - 2).getTotalSteps()) {
+                                mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false);
+                            } else {
+                                mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS +
+                                        mPedometerEntities.get(mPedometerEntities.size() - 2).getTotalSteps(), TAG_STEP, false);
+
+                            }
+                            mPedometerEntityDao.insert(mTodayStepEntity);
+
                         }
                     }
 
                 } else {
-                    mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, 0, false));
-                    mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, 0, false);
+                    mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false));
+                    mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false);
                     mPedometerEntityDao.insert(mTodayStepEntity);
                     Log.e(TAG, "第一次安装创建2个Entity=  " + mPedometerEntityDao.loadAll().size());
                 }

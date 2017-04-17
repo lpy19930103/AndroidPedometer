@@ -1,6 +1,7 @@
 package com.lipy.step.pedometer;
 
 import com.lipy.step.common.BaseApplication;
+import com.lipy.step.common.Constants;
 import com.lipy.step.dao.PedometerEntity;
 import com.lipy.step.result.PedometerUpDateResult;
 import com.lipy.step.utils.HardwarePedometerUtil;
@@ -117,7 +118,7 @@ public class PedometerManager {
             Message msg = Message.obtain();
             msg.what = SEND_MESSAGE_CODE;
             Bundle data = new Bundle();
-            data.putString("msg", "Hello，Service");
+            data.putInt("TAG_STEP", Constants.TAG_STEP);
             msg.setData(data);
             msg.replyTo = clientMessenger;
             try {

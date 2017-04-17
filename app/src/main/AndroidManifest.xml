@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.lipy.step">
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.BODY_SENSORS"/>
+
     <application
             android:name=".common.BaseApplication"
             android:allowBackup="true"
@@ -19,19 +21,22 @@
             </intent-filter>
         </activity>
         <!-- 计步器服务 -->
-        <service android:name=".pedometer.PedometerService"
-                 android:label="PedometerService"
-                 android:icon="@mipmap/ic_launcher"
-                 android:enabled="true"
-                 android:exported="true"
-                 android:process=":remote"
-        />
+        <service
+                android:name=".pedometer.PedometerService"
+                android:enabled="true"
+                android:exported="true"
+                android:icon="@mipmap/ic_launcher"
+                android:label="PedometerService"
+                android:process=":remote"/>
 
         <receiver android:name=".pedometer.StartBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+
+        <activity android:name=".PedometerActivity">
+        </activity>
     </application>
 
 </manifest>

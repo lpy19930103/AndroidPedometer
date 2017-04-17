@@ -23,6 +23,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import java.math.BigDecimal;
+
 /**
  * 圆形进度条，类似 QQ 健康中运动步数的 UI 控件
  * Created by lipy on 2017/4/14 0014.
@@ -53,8 +55,8 @@ public class AnnulusProgress extends View {
 
     //绘制数值
     private TextPaint mValuePaint;
-    private float mValue;
-    private float mMaxValue;
+    private float mValue = 1;
+    private float mMaxValue = 5000;
     private float mValueOffset;
     private int mPrecision;
     private String mPrecisionFormat;
@@ -70,7 +72,7 @@ public class AnnulusProgress extends View {
     private SweepGradient mSweepGradient;
     private int[] mGradientColors = {Color.GREEN, Color.YELLOW, Color.RED};
     //当前进度，[0.0f,1.0f]
-    private float mPercent;
+    private float mPercent = 0.0f ;
     //动画时间
     private long mAnimTime;
     //属性动画
@@ -328,6 +330,7 @@ public class AnnulusProgress extends View {
         }
         float start = mPercent;
         float end = value / mMaxValue;
+        end = new BigDecimal(value).divide(new BigDecimal(mMaxValue)).floatValue();
         startAnimator(start, end, mAnimTime);
     }
 
@@ -339,11 +342,9 @@ public class AnnulusProgress extends View {
             public void onAnimationUpdate(ValueAnimator animation) {
                 mPercent = (float) animation.getAnimatedValue();
                 mValue = mPercent * mMaxValue;
-//                if (BuildConfig.DEBUG) {
-//                    Log.d(TAG, "onAnimationUpdate: percent = " + mPercent
-//                            + ";currentAngle = " + (mSweepAngle * mPercent)
-//                            + ";value = " + mValue);
-//                }
+                    Log.d(TAG, "onAnimationUpdate: percent = " + mPercent
+                            + ";currentAngle = " + (mSweepAngle * mPercent)
+                            + ";value = " + mValue);
                 invalidate();
             }
         });

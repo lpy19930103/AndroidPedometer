@@ -1,40 +1,34 @@
 package com.lipy.step;
 
-import com.lipy.step.common.BaseApplication;
-import com.lipy.step.common.PedometerEvent;
-import com.lipy.step.dao.PedometerEntity;
-import com.lipy.step.dao.PedometerEntityDao;
-import com.lipy.step.pedometer.ApplicationModule;
-import com.lipy.step.pedometer.PedometerRepository;
-import com.lipy.step.result.IGetPedometerResult;
-import com.lipy.step.result.PedometerUpDateResult;
+import com.lipy.step.common.Constants;
 import com.lipy.step.utils.HardwarePedometerUtil;
 import com.lipy.step.utils.PermissionUtils;
 
-import org.greenrobot.eventbus.Subscribe;
-
 import android.Manifest;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * Created by lipy on 2017/4/10 0009.
+ */
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    TextView mTvSteps;
 
     TextView mTvAccelerometer;
     TextView mTvStepCounter;
-    TextView mTvTargetSteps;
     TextView mSdkVer;
 
-    private PedometerRepository mPedometerRepository;
 
     private List<String> mPermissions = new ArrayList<>();
+    private EditText mStepEt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +36,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mTvAccelerometer = (TextView) findViewById(R.id.tv_accelerometer);
         mTvStepCounter = (TextView) findViewById(R.id.tv_step_counter);
-        mTvTargetSteps = (TextView) findViewById(R.id.tv_target_steps);
         mSdkVer = (TextView) findViewById(R.id.tv_sdk_v);
-        mTvSteps = (TextView) findViewById(R.id.tv_steps);
+        findViewById(R.id.set_step).setOnClickListener(this);
+        findViewById(R.id.check_step).setOnClickListener(this);
+        mStepEt = (EditText) findViewById(R.id.set_step_et);
+
+        //权限请求
         mPermissions.add(Manifest.permission.BODY_SENSORS);
         mPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
@@ -56,22 +53,13 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-
         init();
-        ApplicationModule.getInstance().getPedometerManager().checkServiceStart();
-        ApplicationModule.getInstance().getPedometerManager().setPedometerUpDateResult(new PedometerUpDateResult() {
-            @Override
-            public void onPedometerUpDate(PedometerEntity entity) {
-                mTvSteps.setText(entity.getDailyStep() + "步");
-                mTvTargetSteps.setText("日期：" + entity.getDate());
-            }
-        });
+
     }
 
     private void init() {
-        BaseApplication.globalRegisterEvent(this);
-        //第一次初始化数据:包括退出应用后再进入的数据初始化
-        getPedometerStep();
+
+        mSdkVer.setText("" + Build.VERSION.SDK_INT);
 
         if (HardwarePedometerUtil.supportsHardwareAccelerometer(this)) {
             mTvAccelerometer.setText("是");
@@ -85,57 +73,19 @@ public class MainActivity extends AppCompatActivity {
             mTvStepCounter.setText("否");
         }
 
+
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        mSdkVer.setText("" + Build.VERSION.SDK_INT);
-        BaseApplication.getInstances().setDatabase(this);
-        PedometerEntityDao pedometerEntityDao = BaseApplication.getInstances().getDaoSession().getPedometerEntityDao();
-        List<PedometerEntity> pedometerEntities = pedometerEntityDao.loadAll();
-        if (pedometerEntityDao != null && pedometerEntities != null && pedometerEntities.size() > 0) {
-            PedometerEntity pedometerEntity = pedometerEntities.get(pedometerEntities.size() - 1);
-            mTvSteps.setText(pedometerEntity.getDailyStep() + "步");
-            mTvTargetSteps.setText("日期：" + pedometerEntity.getDate());
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.check_step:
+                startActivity(new Intent(this, PedometerActivity.class));
+                break;
+            case R.id.set_step:
+                Constants.TAG_STEP = Integer.parseInt(mStepEt.getText().toString().trim());
+                break;
         }
-    }
 
-    /**
-     * 获取计步器的数据
-     */
-    public void getPedometerStep() {
-        mPedometerRepository = ApplicationModule.getInstance().getPedometerRepository();
-        mPedometerRepository.getPedometerStep(new IGetPedometerResult() {
-            @Override
-            public void onSuccessGet(PedometerEntity cardEntity) {
-                if (cardEntity != null) {
-                    mTvSteps.setText(cardEntity.getDailyStep() + "步");
-//                    mTvTargetSteps.setText("目标步数：" + cardEntity.getTargetStepCount() + "步");
-                }
-            }
-        });
-    }
-
-    /**
-     * 监听数据
-     */
-    @Subscribe
-    public void onEventMainThread(PedometerEvent event) {
-        Log.e("lipy", "onEventMainThread");
-        if (event.mIsUpdate) {
-            getPedometerStep();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        ApplicationModule.getInstance().getPedometerManager().unbindPedometerService();
-        super.onDestroy();
     }
 }

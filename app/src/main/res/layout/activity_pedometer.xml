@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.lipy.step.PedometerActivity">
+
+
+
+    <com.lipy.step.view.AnnulusProgress
+            android:id="@+id/pedometer_progress"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center"
+            app:antiAlias="false"
+            app:arcWidth="15dp"
+            app:bgArcColor="#d1a6a6"
+            app:bgArcWidth="15dp"
+            app:hint="截止当前已走"
+            app:hintSize="15sp"
+            app:maxValue="5000"
+            app:startAngle="135"
+            app:sweepAngle="270"
+            app:unit="步"
+            app:unitSize="15sp"
+            app:value="1"
+            app:valueSize="25sp"/>
+
+
+</LinearLayout>

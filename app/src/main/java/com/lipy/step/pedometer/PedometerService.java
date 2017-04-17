@@ -20,7 +20,8 @@ import android.util.Log;
 
 /**
  * 计步器服务，启动条件：
- * 1、有TYPE_STEP_COUNTER； 2、版本为4.4(19)以上
+ * 1.有TYPE_STEP_COUNTER；
+ * 2.版本为4.4(19)以上
  * Created by lipy on 2017/4/10 0010.
  */
 public class PedometerService extends Service {
@@ -41,6 +42,8 @@ public class PedometerService extends Service {
 
     private PedometerEntity mPedometerEntity;
 
+    private static int TAG_STEP = 0;
+
 
     //实现一个能够处理接收信息的Handler
     private Handler serviceHandler = new Handler() {
@@ -49,6 +52,12 @@ public class PedometerService extends Service {
             super.handleMessage(msg);
             if (msg.what == RECEIVE_MESSAGE_CODE) {
                 Log.i(TAG, "PedometerService serviceHandler");
+
+                Bundle data = msg.getData();
+                if (data != null){
+                    TAG_STEP = data.getInt("TAG_STEP");
+                }
+
                 if (mClientMessenger == null) {
                     mClientMessenger = msg.replyTo;//这个Message是在客户端中创建的
                 }
@@ -84,7 +93,7 @@ public class PedometerService extends Service {
         mContext = BaseApplication.getAppContext();
         Log.i(TAG, "PedometerService onCreate");
         mPedometerCore = ApplicationModule.getInstance().getPedometerRepository();
-        mPedometerCore.initData();
+        mPedometerCore.initData(TAG_STEP);
         mPedometerCore.setPedometerUpDateListener(new PedometerUpDateListener() {
             @Override
             public void PedometerUpDate(PedometerEntity pedometerEntity) {

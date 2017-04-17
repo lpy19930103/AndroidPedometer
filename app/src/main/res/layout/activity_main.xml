@@ -9,7 +9,6 @@
               android:paddingTop="@dimen/activity_vertical_margin">
 
 
-
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -79,40 +78,32 @@
                 android:textSize="24sp"/>
     </LinearLayout>
 
-    <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginTop="30dp"-->
-            <!--android:orientation="horizontal">-->
-
-        <!--<Button-->
-                <!--android:id="@+id/btn_start"-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_weight="1"-->
-                <!--android:text="开始计步"/>-->
-
-    <!--</LinearLayout>-->
-
-    <TextView
-            android:id="@+id/tv_steps"
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:text="0步"
-            android:textColor="@color/colorAccent"
-            android:textSize="30sp"/>
+            android:layout_marginTop="30dp"
+            android:orientation="vertical">
 
-    <TextView
-            android:id="@+id/tv_target_steps"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="right"
-            android:textColor="#000000"
-            android:textSize="20sp"/>
+        <EditText android:layout_width="match_parent"
+                  android:id="@+id/set_step_et"
+                  android:layout_height="40dp"/>
 
+        <Button
+                android:id="@+id/set_step"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="设置步数"/>
+
+        <Button
+                android:id="@+id/check_step"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="查看进度"/>
+
+
+    </LinearLayout>
 
 
 </LinearLayout>
