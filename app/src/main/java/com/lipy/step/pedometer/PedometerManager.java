@@ -83,7 +83,9 @@ public class PedometerManager {
     }
 
     public void unbindPedometerService() {
-        mContext.unbindService(mServiceConnection);
+        if (mServiceConnection != null) {
+            mContext.unbindService(mServiceConnection);
+        }
     }
 
 

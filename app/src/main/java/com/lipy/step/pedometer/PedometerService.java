@@ -54,8 +54,9 @@ public class PedometerService extends Service {
                 Log.i(TAG, "PedometerService serviceHandler");
 
                 Bundle data = msg.getData();
-                if (data != null){
+                if (data != null) {
                     TAG_STEP = data.getInt("TAG_STEP");
+                    Log.e("lipy", "TAG_STEP = " + data.getInt("TAG_STEP"));
                 }
 
                 if (mClientMessenger == null) {

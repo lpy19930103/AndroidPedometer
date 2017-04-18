@@ -26,12 +26,10 @@ public class PedometerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedometer);
         mAnnulusProgress = (AnnulusProgress) findViewById(R.id.pedometer_progress);
-        mAnnulusProgress.setValue(1);
-        ApplicationModule.getInstance().getPedometerManager().checkServiceStart();
         ApplicationModule.getInstance().getPedometerManager().setPedometerUpDateResult(new PedometerUpDateResult() {
             @Override
             public void onPedometerUpDate(PedometerEntity entity) {
-                mAnnulusProgress.setValue(entity.getDailyStep());
+                mAnnulusProgress.setProgress(entity.getDailyStep());
             }
         });
     }
@@ -45,8 +43,9 @@ public class PedometerActivity extends AppCompatActivity {
         if (pedometerEntityDao != null && pedometerEntities != null && pedometerEntities.size() > 0) {
             PedometerEntity pedometerEntity = pedometerEntities.get(pedometerEntities.size() - 1);
             Log.e("lipy", "pedometerEntity.getTagStep()" + pedometerEntity.getTagStep());
-            mAnnulusProgress.setMaxValue(pedometerEntity.getTagStep());
-            mAnnulusProgress.setValue(pedometerEntity.getDailyStep());
+            Log.e("lipy", "pedometerEntity.getDailyStep()" + pedometerEntity.getDailyStep());
+            mAnnulusProgress.setMaxValue(5000);
+            mAnnulusProgress.setProgress(pedometerEntity.getDailyStep());
         }
     }
 

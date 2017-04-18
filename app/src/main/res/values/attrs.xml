@@ -9,8 +9,8 @@
         <!-- 设置动画时间 -->
         <attr name="animTime" format="integer" />
         <!-- 绘制内容的数值 -->
-        <attr name="maxValue" format="float" />
-        <attr name="value" format="float" />
+        <attr name="maxValue" format="integer" />
+        <attr name="value" format="integer" />
         <!-- 绘制内容的单位 -->
         <attr name="unit" format="string|reference" />
         <attr name="unitSize" format="dimension" />
@@ -37,7 +37,7 @@
         <attr name="textOffsetPercentInRadius" format="float" />
 
         <!-- 圆形进度条 -->
-        <declare-styleable name="CircleProgressBar">
+        <declare-styleable name="AnnulusProgress">
             <attr name="antiAlias" />
             <attr name="startAngle" />
             <attr name="sweepAngle" />

@@ -1,6 +1,7 @@
 package com.lipy.step;
 
 import com.lipy.step.common.Constants;
+import com.lipy.step.pedometer.ApplicationModule;
 import com.lipy.step.utils.HardwarePedometerUtil;
 import com.lipy.step.utils.PermissionUtils;
 
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void init() {
+
+        ApplicationModule.getInstance().getPedometerManager().checkServiceStart();
 
         mSdkVer.setText("" + Build.VERSION.SDK_INT);
 

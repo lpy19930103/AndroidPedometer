@@ -72,7 +72,7 @@ public class AnnulusProgress extends View {
     private SweepGradient mSweepGradient;
     private int[] mGradientColors = {Color.GREEN, Color.YELLOW, Color.RED};
     //当前进度，[0.0f,1.0f]
-    private float mPercent = 0.0f ;
+    private float mPercent = 0.0f;
     //动画时间
     private long mAnimTime;
     //属性动画
@@ -101,42 +101,42 @@ public class AnnulusProgress extends View {
         mCenterPoint = new Point();
         initAttrs(attrs);
         initPaint();
-        setValue(mValue);
+//        setProgress(mValue);
     }
 
     private void initAttrs(AttributeSet attrs) {
-        TypedArray typedArray = mContext.obtainStyledAttributes(attrs, R.styleable.CircleProgressBar);
+        TypedArray typedArray = mContext.obtainStyledAttributes(attrs, R.styleable.AnnulusProgress);
 
-        antiAlias = typedArray.getBoolean(R.styleable.CircleProgressBar_antiAlias, Constant.ANTI_ALIAS);
+        antiAlias = typedArray.getBoolean(R.styleable.AnnulusProgress_antiAlias, Constant.ANTI_ALIAS);
 
-        mHint = typedArray.getString(R.styleable.CircleProgressBar_hint);
-        mHintColor = typedArray.getColor(R.styleable.CircleProgressBar_hintColor, Color.BLACK);
-        mHintSize = typedArray.getDimension(R.styleable.CircleProgressBar_hintSize, Constant.DEFAULT_HINT_SIZE);
+        mHint = typedArray.getString(R.styleable.AnnulusProgress_hint);
+        mHintColor = typedArray.getColor(R.styleable.AnnulusProgress_hintColor, Color.BLACK);
+        mHintSize = typedArray.getDimension(R.styleable.AnnulusProgress_hintSize, Constant.DEFAULT_HINT_SIZE);
 
-        mValue = typedArray.getFloat(R.styleable.CircleProgressBar_value, Constant.DEFAULT_VALUE);
-        mMaxValue = typedArray.getFloat(R.styleable.CircleProgressBar_maxValue, Constant.DEFAULT_MAX_VALUE);
+        mValue = typedArray.getFloat(R.styleable.AnnulusProgress_value, Constant.DEFAULT_VALUE);
+        mMaxValue = typedArray.getFloat(R.styleable.AnnulusProgress_maxValue, Constant.DEFAULT_MAX_VALUE);
         //内容数值精度格式
-        mPrecision = typedArray.getInt(R.styleable.CircleProgressBar_precision, 0);
+        mPrecision = typedArray.getInt(R.styleable.AnnulusProgress_precision, 0);
         mPrecisionFormat = MiscUtil.getPrecisionFormat(mPrecision);
-        mValueColor = typedArray.getColor(R.styleable.CircleProgressBar_valueColor, Color.BLACK);
-        mValueSize = typedArray.getDimension(R.styleable.CircleProgressBar_valueSize, Constant.DEFAULT_VALUE_SIZE);
+        mValueColor = typedArray.getColor(R.styleable.AnnulusProgress_valueColor, Color.BLACK);
+        mValueSize = typedArray.getDimension(R.styleable.AnnulusProgress_valueSize, Constant.DEFAULT_VALUE_SIZE);
 
-        mUnit = typedArray.getString(R.styleable.CircleProgressBar_unit);
-        mUnitColor = typedArray.getColor(R.styleable.CircleProgressBar_unitColor, Color.BLACK);
-        mUnitSize = typedArray.getDimension(R.styleable.CircleProgressBar_unitSize, Constant.DEFAULT_UNIT_SIZE);
+        mUnit = typedArray.getString(R.styleable.AnnulusProgress_unit);
+        mUnitColor = typedArray.getColor(R.styleable.AnnulusProgress_unitColor, Color.BLACK);
+        mUnitSize = typedArray.getDimension(R.styleable.AnnulusProgress_unitSize, Constant.DEFAULT_UNIT_SIZE);
 
-        mArcWidth = typedArray.getDimension(R.styleable.CircleProgressBar_arcWidth, Constant.DEFAULT_ARC_WIDTH);
-        mStartAngle = typedArray.getFloat(R.styleable.CircleProgressBar_startAngle, Constant.DEFAULT_START_ANGLE);
-        mSweepAngle = typedArray.getFloat(R.styleable.CircleProgressBar_sweepAngle, Constant.DEFAULT_SWEEP_ANGLE);
+        mArcWidth = typedArray.getDimension(R.styleable.AnnulusProgress_arcWidth, Constant.DEFAULT_ARC_WIDTH);
+        mStartAngle = typedArray.getFloat(R.styleable.AnnulusProgress_startAngle, Constant.DEFAULT_START_ANGLE);
+        mSweepAngle = typedArray.getFloat(R.styleable.AnnulusProgress_sweepAngle, Constant.DEFAULT_SWEEP_ANGLE);
 
-        mBgArcColor = typedArray.getColor(R.styleable.CircleProgressBar_bgArcColor, Color.WHITE);
-        mBgArcWidth = typedArray.getDimension(R.styleable.CircleProgressBar_bgArcWidth, Constant.DEFAULT_ARC_WIDTH);
-        mTextOffsetPercentInRadius = typedArray.getFloat(R.styleable.CircleProgressBar_textOffsetPercentInRadius, 0.33f);
+        mBgArcColor = typedArray.getColor(R.styleable.AnnulusProgress_bgArcColor, Color.WHITE);
+        mBgArcWidth = typedArray.getDimension(R.styleable.AnnulusProgress_bgArcWidth, Constant.DEFAULT_ARC_WIDTH);
+        mTextOffsetPercentInRadius = typedArray.getFloat(R.styleable.AnnulusProgress_textOffsetPercentInRadius, 0.33f);
 
-        //mPercent = typedArray.getFloat(R.styleable.CircleProgressBar_percent, 0);
-        mAnimTime = typedArray.getInt(R.styleable.CircleProgressBar_animTime, Constant.DEFAULT_ANIM_TIME);
+        //mPercent = typedArray.getFloat(R.styleable.AnnulusProgress_percent, 0);
+        mAnimTime = typedArray.getInt(R.styleable.AnnulusProgress_animTime, Constant.DEFAULT_ANIM_TIME);
 
-        int gradientArcColors = typedArray.getResourceId(R.styleable.CircleProgressBar_arcColors, 0);
+        int gradientArcColors = typedArray.getResourceId(R.styleable.AnnulusProgress_arcColors, 0);
         if (gradientArcColors != 0) {
             try {
                 int[] gradientColors = getResources().getIntArray(gradientArcColors);
@@ -292,7 +292,7 @@ public class AnnulusProgress extends View {
      */
     private void updateArcPaint() {
         // 设置渐变
-        int[] mGradientColors = {Color.GREEN, Color.YELLOW, Color.RED};
+        int[] mGradientColors = {Color.GREEN, Color.YELLOW, Color.RED, Color.GREEN};
         mSweepGradient = new SweepGradient(mCenterPoint.x, mCenterPoint.y, mGradientColors, null);
         mArcPaint.setShader(mSweepGradient);
     }
@@ -324,13 +324,19 @@ public class AnnulusProgress extends View {
     /**
      * 设置当前值
      */
-    public void setValue(float value) {
-        if (value > mMaxValue) {
-            value = mMaxValue;
+    public void setProgress(float progress) {
+        if (progress > mMaxValue) {
+            progress = mMaxValue;
         }
         float start = mPercent;
-        float end = value / mMaxValue;
-        end = new BigDecimal(value).divide(new BigDecimal(mMaxValue)).floatValue();
+
+        if (mMaxValue == 0) mMaxValue = 5000;
+        BigDecimal bigDecimal1 = new BigDecimal(Float.toString(progress));
+        BigDecimal bigDecimal2 = new BigDecimal(Float.toString(mMaxValue));
+
+        float end = bigDecimal1.divide(bigDecimal2).floatValue();
+
+        Log.e("lipy", "end = " + end);
         startAnimator(start, end, mAnimTime);
     }
 
@@ -342,9 +348,9 @@ public class AnnulusProgress extends View {
             public void onAnimationUpdate(ValueAnimator animation) {
                 mPercent = (float) animation.getAnimatedValue();
                 mValue = mPercent * mMaxValue;
-                    Log.d(TAG, "onAnimationUpdate: percent = " + mPercent
-                            + ";currentAngle = " + (mSweepAngle * mPercent)
-                            + ";value = " + mValue);
+//                Log.d(TAG, "onAnimationUpdate: percent = " + mPercent
+//                        + ";currentAngle = " + (mSweepAngle * mPercent)
+//                        + ";value = " + mValue);
                 invalidate();
             }
         });
