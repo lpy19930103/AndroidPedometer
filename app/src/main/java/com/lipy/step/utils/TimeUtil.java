@@ -1,5 +1,7 @@
 package com.lipy.step.utils;
 
+import android.util.Log;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -90,7 +92,16 @@ public class TimeUtil {
         String dateString = formatter.format(currentTime);
         return dateString;
     }
+
     private static ThreadLocal<SimpleDateFormat> DateLocal = new ThreadLocal<SimpleDateFormat>();
 
+    /**
+     * 获取当前小时数
+     */
+    public static int getHour() {
+        Calendar instance = Calendar.getInstance();
+        Log.e("LIPY", "HOUR_OF_DAY = " + instance.get(Calendar.HOUR_OF_DAY));
+        return instance.get(Calendar.HOUR_OF_DAY);
+    }
 
 }

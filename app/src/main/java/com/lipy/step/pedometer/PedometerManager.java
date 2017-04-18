@@ -43,6 +43,7 @@ public class PedometerManager {
     private Messenger serviceMessenger = null;
 
     private Messenger clientMessenger = new Messenger(new ClientHandler());
+    private boolean mBindService;
 
 
     public PedometerManager() {
@@ -69,7 +70,7 @@ public class PedometerManager {
     public void startPedometerService() {
         mContext.startService(mService);
 
-        mContext.bindService(mService, mServiceConnection, Context.BIND_AUTO_CREATE);
+        mBindService = mContext.bindService(mService, mServiceConnection, Context.BIND_AUTO_CREATE);
         IsServiceRunning = true;
     }
 
@@ -83,7 +84,7 @@ public class PedometerManager {
     }
 
     public void unbindPedometerService() {
-        if (mServiceConnection != null) {
+        if (mServiceConnection != null && mBindService) {
             mContext.unbindService(mServiceConnection);
         }
     }

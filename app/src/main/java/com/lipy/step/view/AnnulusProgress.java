@@ -101,7 +101,7 @@ public class AnnulusProgress extends View {
         mCenterPoint = new Point();
         initAttrs(attrs);
         initPaint();
-//        setProgress(mValue);
+        setProgress(mValue);
     }
 
     private void initAttrs(AttributeSet attrs) {

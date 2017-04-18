@@ -135,6 +135,7 @@ public class PedometerService extends Service {
         }
         mSensorManager = null;
         mContext = null;
+        ApplicationModule.getInstance().getPedometerManager().checkServiceStart();
     }
 
 }

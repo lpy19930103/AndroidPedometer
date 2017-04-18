@@ -12,6 +12,7 @@ import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.os.CountDownTimer;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -46,6 +47,8 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
     private PedometerEntity mYesterdayPedometerEntity;
 
     private static int TAG_STEP = 0;
+
+    private CountDownTimer mCountDownTimer;
 
 
     public PedometerCore() {
@@ -84,6 +87,9 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
 
             if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
 
+                //倒计时
+                countDown();
+
                 CURRENT_TOTAL_STEPS = (int) event.values[0];
                 CURRENT_STEP = CURRENT_TOTAL_STEPS - LAST_SYSTEM_STEPS;
 
@@ -101,22 +107,32 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
                         if (TimeUtil.IsToday(date)) {
                             mTodayStepEntity = pedometerEntity;
                             Log.e(TAG, "还是今天 复用今天的Entity");
-                        } else if (TimeUtil.IsYesterday(date) && mPedometerEntities.size() > 1) {
+                        } else if (TimeUtil.IsYesterday(date) && mPedometerEntities.size() > 1) {//跨天
                             Log.e(TAG, "是昨天 创建新的Entity ");
-                            if (CURRENT_TOTAL_STEPS > mPedometerEntities.get(mPedometerEntities.size() - 2).getTotalSteps()) {
-                                mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false);
-                            } else {
-                                mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS +
-                                        mPedometerEntities.get(mPedometerEntities.size() - 2).getTotalSteps(), TAG_STEP, false);
+                            PedometerEntity pedometerEntity1 = mPedometerEntities.get(mPedometerEntities.size() - 2);
+                            if (pedometerEntity1.getPunchCard()) {//打过卡
+                                if (CURRENT_TOTAL_STEPS > pedometerEntity1.getTotalSteps()) {//没有关机
+                                    mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false);
+                                } else {
+                                    mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS +
+                                            pedometerEntity1.getTotalSteps(), TAG_STEP, false, false);
 
+                                }
+                                mPedometerEntityDao.insert(mTodayStepEntity);
+                            } else {
+                                //如果前一天未打卡就清掉数据库 从新开始记步
+                                mPedometerEntityDao.deleteAll();
+                                mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false));
+                                mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false);
+                                mPedometerEntityDao.insert(mTodayStepEntity);
+                                Log.e(TAG, "第一次安装创建2个Entity=  " + mPedometerEntityDao.loadAll().size());
                             }
-                            mPedometerEntityDao.insert(mTodayStepEntity);
                         } else if (mPedometerEntities.size() > 1) {
 
                             //如果是跨天的情况下 就清掉数据库 从新开始记步
                             mPedometerEntityDao.deleteAll();
-                            mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false));
-                            mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false);
+                            mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false));
+                            mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false);
                             mPedometerEntityDao.insert(mTodayStepEntity);
                             Log.e(TAG, "第一次安装创建2个Entity=  " + mPedometerEntityDao.loadAll().size());
 
@@ -124,8 +140,8 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
                     }
 
                 } else {
-                    mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false));
-                    mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false);
+                    mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false));
+                    mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false);
                     mPedometerEntityDao.insert(mTodayStepEntity);
                     Log.e(TAG, "第一次安装创建2个Entity=  " + mPedometerEntityDao.loadAll().size());
                 }
@@ -139,7 +155,7 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
                     }
 
                     if (CURRENT_TOTAL_STEPS < mYesterdayPedometerEntity.getTotalSteps()) {//当前系统步数 < 昨日记录总步数 判断为重启手机
-                        mTodayStepEntity.setRestart(true);
+                        mTodayStepEntity.setReStart(true);
 
                         CURRENT_TOTAL_STEPS += mYesterdayPedometerEntity.getTotalSteps();//纠正总步数
                         Log.e(TAG, "纠正总步数1 = " + CURRENT_TOTAL_STEPS);
@@ -152,17 +168,21 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
                             }
                             Log.e(TAG, "纠正总步数2 = " + CURRENT_TOTAL_STEPS);
                         }
-                    } else if (mTodayStepEntity.getRestart()) {//当前是重启状态
+                    } else if (mTodayStepEntity.getReStart()) {//当前是重启状态
 
                         if (LAST_SYSTEM_STEPS != 0 || CURRENT_STEP != 0) {
                             CURRENT_TOTAL_STEPS = mTodayStepEntity.getTotalSteps() + CURRENT_STEP;
                         } else {
                             CURRENT_TOTAL_STEPS += mTodayStepEntity.getTotalSteps();
                         }
-                        Log.e(TAG, "关机状态 = " + mTodayStepEntity.getRestart());
+                        Log.e(TAG, "关机状态 = " + mTodayStepEntity.getReStart());
                     }
 
                     DAILY_STEP = CURRENT_TOTAL_STEPS - mYesterdayPedometerEntity.getTotalSteps();//正常记步
+
+                    if (22 <= TimeUtil.getHour() && TimeUtil.getHour() <= 24) {
+                        mTodayStepEntity.setPunchCard(true);
+                    }
 
                     mTodayStepEntity.setTotalSteps(CURRENT_TOTAL_STEPS);
                     mTodayStepEntity.setDailyStep(DAILY_STEP);
@@ -213,5 +233,31 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
     public void onDestroy() {
         CURRENT_STEP = 0;
         mTodayStepEntity = null;
+    }
+
+    private void countDown() {
+        if (mCountDownTimer == null) {
+            mCountDownTimer = new CountDownTimer(600000, 1000) {
+                @Override
+                public void onTick(long l) {
+                    //倒计时每秒的回调
+                }
+
+                @Override
+                public void onFinish() {
+                    //倒计时结束
+                    if (mTodayStepEntity != null &&
+                            mTodayStepEntity.getDailyStep() >= DAILY_STEP &&
+                            mTodayStepEntity.getDailyStep() >= DAILY_STEP) {
+
+                        mTodayStepEntity.setTotalSteps(CURRENT_TOTAL_STEPS);
+                        mTodayStepEntity.setDailyStep(DAILY_STEP);
+                        Log.e(TAG, "无操作倒计时 每日步数= " + mTodayStepEntity.getDailyStep());
+                    }
+                }
+            };
+        }
+        mCountDownTimer.cancel();
+        mCountDownTimer.start();
     }
 }

@@ -35,7 +35,10 @@ public class generatePedometerDataBase {
 
         PedometerCard.addIntProperty("tagStep");
         //是否重启手机重置，0重置，1未重置
-        PedometerCard.addBooleanProperty("restart");
+        PedometerCard.addBooleanProperty("reStart");
+
+        //打卡
+        PedometerCard.addBooleanProperty("punchCard");
 
 
     }

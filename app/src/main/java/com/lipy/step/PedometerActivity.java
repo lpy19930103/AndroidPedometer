@@ -10,6 +10,7 @@ import com.lipy.step.view.AnnulusProgress;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 
 import java.util.List;
 
@@ -52,7 +53,19 @@ public class PedometerActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+
         ApplicationModule.getInstance().getPedometerManager().unbindPedometerService();
 
     }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            ApplicationModule.getInstance().getPedometerManager().unbindPedometerService();
+            finish();
+            return true;
+        }
+        return false;
+    }
+
 }
