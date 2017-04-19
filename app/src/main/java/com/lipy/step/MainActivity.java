@@ -1,7 +1,7 @@
 package com.lipy.step;
 
 import com.lipy.step.common.Constants;
-import com.lipy.step.pedometer.ApplicationModule;
+import com.lipy.step.pedometer.ActionModule;
 import com.lipy.step.utils.HardwarePedometerUtil;
 import com.lipy.step.utils.PermissionUtils;
 
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void init() {
 
-        ApplicationModule.getInstance().getPedometerManager().checkServiceStart();
+        ActionModule.getInstance().getPedometerManager().checkServiceStart();
 
         mSdkVer.setText("" + Build.VERSION.SDK_INT);
 
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            ApplicationModule.getInstance().getPedometerManager().unbindPedometerService();
+            ActionModule.getInstance().getPedometerManager().unbindPedometerService();
             finish();
             return true;
         }

@@ -5,6 +5,8 @@ import com.lipy.step.dao.PedometerEntity;
 import com.lipy.step.result.PedometerUpDateListener;
 import com.lipy.step.utils.HardwarePedometerUtil;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +18,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.util.Log;
 
 /**
@@ -93,7 +96,7 @@ public class PedometerService extends Service {
         super.onCreate();
         mContext = BaseApplication.getInstances().getAppContext();
         Log.i(TAG, "PedometerService onCreate");
-        mPedometerCore = ApplicationModule.getInstance().getPedometerRepository();
+        mPedometerCore = ActionModule.getInstance().getPedometerRepository();
         mPedometerCore.initData(TAG_STEP);
         mPedometerCore.setPedometerUpDateListener(new PedometerUpDateListener() {
             @Override
@@ -104,7 +107,7 @@ public class PedometerService extends Service {
             }
         });
 
-        ApplicationModule.getInstance().getPedometerManager().init();
+        ActionModule.getInstance().getPedometerManager().init();
 
         mSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
 
@@ -119,7 +122,16 @@ public class PedometerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(TAG, "PedometerService onStartCommand");
+        Log.e(TAG, "PedometerService onStartCommand");
+
+        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(ALARM_SERVICE);
+        long triggerAtTime = SystemClock.elapsedRealtime() + 10000;
+
+        Intent i = new Intent(this, AlarmBroadcastReceiver.class);
+
+        PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
+
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
 
         return START_STICKY;
     }
@@ -135,7 +147,7 @@ public class PedometerService extends Service {
         }
         mSensorManager = null;
         mContext = null;
-        ApplicationModule.getInstance().getPedometerManager().checkServiceStart();
+        ActionModule.getInstance().getPedometerManager().checkServiceStart();
     }
 
 }

@@ -2,7 +2,7 @@ package com.lipy.step.common;
 
 import com.lipy.step.dao.DaoMaster;
 import com.lipy.step.dao.DaoSession;
-import com.lipy.step.pedometer.ApplicationModule;
+import com.lipy.step.pedometer.ActionModule;
 
 import android.app.Application;
 import android.content.Context;
@@ -29,7 +29,7 @@ public class BaseApplication extends Application {
         super.onCreate();
         instances = this;
         setDatabase(this);
-        ApplicationModule.initSingleton().onCreateMainProcess();
+        ActionModule.initSingleton().onCreateMainProcess();
     }
 
     public Context getAppContext() {

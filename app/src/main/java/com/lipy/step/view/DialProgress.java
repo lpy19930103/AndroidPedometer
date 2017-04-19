@@ -2,7 +2,7 @@ package com.lipy.step.view;
 
 
 import com.lipy.step.R;
-import com.lipy.step.utils.Constant;
+import com.lipy.step.common.Constants;
 import com.lipy.step.utils.MiscUtil;
 
 import android.animation.ValueAnimator;
@@ -93,7 +93,7 @@ public class DialProgress extends View {
 
     private void init(Context context, AttributeSet attrs) {
         mContext = context;
-        mDefaultSize = MiscUtil.dipToPx(context, Constant.DEFAULT_SIZE);
+        mDefaultSize = MiscUtil.dipToPx(context, Constants.DEFAULT_SIZE);
         mRectF = new RectF();
         mCenterPoint = new Point();
         initConfig(context, attrs);
@@ -105,9 +105,9 @@ public class DialProgress extends View {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.DialProgress);
 
         antiAlias = typedArray.getBoolean(R.styleable.DialProgress_antiAlias, true);
-        mMaxValue = typedArray.getFloat(R.styleable.DialProgress_maxValue, Constant.DEFAULT_MAX_VALUE);
-        mValue = typedArray.getFloat(R.styleable.DialProgress_value, Constant.DEFAULT_VALUE);
-        mValueSize = typedArray.getDimension(R.styleable.DialProgress_valueSize, Constant.DEFAULT_VALUE_SIZE);
+        mMaxValue = typedArray.getFloat(R.styleable.DialProgress_maxValue, Constants.DEFAULT_MAX_VALUE);
+        mValue = typedArray.getFloat(R.styleable.DialProgress_value, Constants.DEFAULT_VALUE);
+        mValueSize = typedArray.getDimension(R.styleable.DialProgress_valueSize, Constants.DEFAULT_VALUE_SIZE);
         mValueColor = typedArray.getColor(R.styleable.DialProgress_valueColor, Color.BLACK);
         mDialIntervalDegree = typedArray.getInt(R.styleable.DialProgress_dialIntervalDegree, 10);
         int precision = typedArray.getInt(R.styleable.DialProgress_precision, 0);
@@ -115,18 +115,18 @@ public class DialProgress extends View {
 
         mUnit = typedArray.getString(R.styleable.DialProgress_unit);
         mUnitColor = typedArray.getColor(R.styleable.DialProgress_unitColor, Color.BLACK);
-        mUnitSize = typedArray.getDimension(R.styleable.DialProgress_unitSize, Constant.DEFAULT_UNIT_SIZE);
+        mUnitSize = typedArray.getDimension(R.styleable.DialProgress_unitSize, Constants.DEFAULT_UNIT_SIZE);
 
         mHint = typedArray.getString(R.styleable.DialProgress_hint);
         mHintColor = typedArray.getColor(R.styleable.DialProgress_hintColor, Color.BLACK);
-        mHintSize = typedArray.getDimension(R.styleable.DialProgress_hintSize, Constant.DEFAULT_HINT_SIZE);
+        mHintSize = typedArray.getDimension(R.styleable.DialProgress_hintSize, Constants.DEFAULT_HINT_SIZE);
 
-        mArcWidth = typedArray.getDimension(R.styleable.DialProgress_arcWidth, Constant.DEFAULT_ARC_WIDTH);
+        mArcWidth = typedArray.getDimension(R.styleable.DialProgress_arcWidth, Constants.DEFAULT_ARC_WIDTH);
 
-        mStartAngle = typedArray.getFloat(R.styleable.DialProgress_startAngle, Constant.DEFAULT_START_ANGLE);
-        mSweepAngle = typedArray.getFloat(R.styleable.DialProgress_sweepAngle, Constant.DEFAULT_SWEEP_ANGLE);
+        mStartAngle = typedArray.getFloat(R.styleable.DialProgress_startAngle, Constants.DEFAULT_START_ANGLE);
+        mSweepAngle = typedArray.getFloat(R.styleable.DialProgress_sweepAngle, Constants.DEFAULT_SWEEP_ANGLE);
 
-        mAnimTime = typedArray.getInt(R.styleable.DialProgress_animTime, Constant.DEFAULT_ANIM_TIME);
+        mAnimTime = typedArray.getInt(R.styleable.DialProgress_animTime, Constants.DEFAULT_ANIM_TIME);
 
         mBgArcColor = typedArray.getColor(R.styleable.DialProgress_bgArcColor, Color.GRAY);
         mDialWidth = typedArray.getDimension(R.styleable.DialProgress_dialWidth, 2);

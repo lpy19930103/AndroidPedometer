@@ -21,6 +21,7 @@ public class ScreenBroadcastReceiver extends BroadcastReceiver {
         if (Intent.ACTION_SCREEN_ON.equals(action) ||// 开屏
                 Intent.ACTION_SCREEN_OFF.equals(action) ||// 锁屏
                 Intent.ACTION_USER_PRESENT.equals(action)) { // 锁屏
+            ActionModule.getInstance().getPedometerManager().checkServiceStart();
         }
     }
 

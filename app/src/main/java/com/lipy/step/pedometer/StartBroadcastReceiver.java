@@ -16,7 +16,7 @@ public class StartBroadcastReceiver extends BroadcastReceiver {
         if (intent.getAction().equals(ACTION)){
             Intent mService = new Intent(context, PedometerService.class);
             context.startService(mService);
-            ApplicationModule.getInstance().getPedometerManager().IsServiceRunning = true;
+            ActionModule.getInstance().getPedometerManager().IsServiceRunning = true;
         }
     }
 }

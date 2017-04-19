@@ -2,7 +2,7 @@ package com.lipy.step.view;
 
 
 import com.lipy.step.R;
-import com.lipy.step.utils.Constant;
+import com.lipy.step.common.Constants;
 import com.lipy.step.utils.MiscUtil;
 
 import android.animation.Animator;
@@ -116,7 +116,7 @@ public class WaveProgress extends View {
     }
 
     private void init(Context context, AttributeSet attrs) {
-        mDefaultSize = MiscUtil.dipToPx(context, Constant.DEFAULT_SIZE);
+        mDefaultSize = MiscUtil.dipToPx(context, Constants.DEFAULT_SIZE);
         mRectF = new RectF();
         mCenterPoint = new Point();
 
@@ -129,22 +129,22 @@ public class WaveProgress extends View {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.WaveProgress);
 
         antiAlias = typedArray.getBoolean(R.styleable.WaveProgress_antiAlias, true);
-        mDarkWaveAnimTime = typedArray.getInt(R.styleable.WaveProgress_darkWaveAnimTime, Constant.DEFAULT_ANIM_TIME);
-        mLightWaveAnimTime = typedArray.getInt(R.styleable.WaveProgress_lightWaveAnimTime, Constant.DEFAULT_ANIM_TIME);
-        mMaxValue = typedArray.getFloat(R.styleable.WaveProgress_maxValue, Constant.DEFAULT_MAX_VALUE);
-        mValue = typedArray.getFloat(R.styleable.WaveProgress_value, Constant.DEFAULT_VALUE);
-        mValueSize = typedArray.getDimension(R.styleable.WaveProgress_valueSize, Constant.DEFAULT_VALUE_SIZE);
+        mDarkWaveAnimTime = typedArray.getInt(R.styleable.WaveProgress_darkWaveAnimTime, Constants.DEFAULT_ANIM_TIME);
+        mLightWaveAnimTime = typedArray.getInt(R.styleable.WaveProgress_lightWaveAnimTime, Constants.DEFAULT_ANIM_TIME);
+        mMaxValue = typedArray.getFloat(R.styleable.WaveProgress_maxValue, Constants.DEFAULT_MAX_VALUE);
+        mValue = typedArray.getFloat(R.styleable.WaveProgress_value, Constants.DEFAULT_VALUE);
+        mValueSize = typedArray.getDimension(R.styleable.WaveProgress_valueSize, Constants.DEFAULT_VALUE_SIZE);
         mValueColor = typedArray.getColor(R.styleable.WaveProgress_valueColor, Color.BLACK);
 
         mHint = typedArray.getString(R.styleable.WaveProgress_hint);
         mHintColor = typedArray.getColor(R.styleable.WaveProgress_hintColor, Color.BLACK);
-        mHintSize = typedArray.getDimension(R.styleable.WaveProgress_hintSize, Constant.DEFAULT_HINT_SIZE);
+        mHintSize = typedArray.getDimension(R.styleable.WaveProgress_hintSize, Constants.DEFAULT_HINT_SIZE);
 
-        mCircleWidth = typedArray.getDimension(R.styleable.WaveProgress_circleWidth, Constant.DEFAULT_ARC_WIDTH);
+        mCircleWidth = typedArray.getDimension(R.styleable.WaveProgress_circleWidth, Constants.DEFAULT_ARC_WIDTH);
         mCircleColor = typedArray.getColor(R.styleable.WaveProgress_circleColor, Color.GREEN);
         mBgCircleColor = typedArray.getColor(R.styleable.WaveProgress_bgCircleColor, Color.WHITE);
 
-        mWaveHeight = typedArray.getDimension(R.styleable.WaveProgress_waveHeight, Constant.DEFAULT_WAVE_HEIGHT);
+        mWaveHeight = typedArray.getDimension(R.styleable.WaveProgress_waveHeight, Constants.DEFAULT_WAVE_HEIGHT);
         mWaveNum = typedArray.getInt(R.styleable.WaveProgress_waveNum, 1);
         mDarkWaveColor = typedArray.getColor(R.styleable.WaveProgress_darkWaveColor,
                 getResources().getColor(android.R.color.holo_blue_dark));

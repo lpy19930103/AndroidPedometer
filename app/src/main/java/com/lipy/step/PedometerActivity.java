@@ -3,14 +3,13 @@ package com.lipy.step;
 import com.lipy.step.common.BaseApplication;
 import com.lipy.step.dao.PedometerEntity;
 import com.lipy.step.dao.PedometerEntityDao;
-import com.lipy.step.pedometer.ApplicationModule;
+import com.lipy.step.pedometer.ActionModule;
 import com.lipy.step.result.PedometerUpDateResult;
 import com.lipy.step.view.AnnulusProgress;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class PedometerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedometer);
         mAnnulusProgress = (AnnulusProgress) findViewById(R.id.pedometer_progress);
-        ApplicationModule.getInstance().getPedometerManager().setPedometerUpDateResult(new PedometerUpDateResult() {
+        ActionModule.getInstance().getPedometerManager().setPedometerUpDateResult(new PedometerUpDateResult() {
             @Override
             public void onPedometerUpDate(PedometerEntity entity) {
                 mAnnulusProgress.setProgress(entity.getDailyStep());

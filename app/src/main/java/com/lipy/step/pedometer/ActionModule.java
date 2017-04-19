@@ -1,16 +1,15 @@
 package com.lipy.step.pedometer;
 
 import com.lipy.step.common.BaseApplication;
-import com.lipy.step.result.PedometerUpDateListener;
 
 import android.content.Context;
 
 
-public class ApplicationModule {
+public class ActionModule {
 
     private final Context mAppContent;
 
-    private static ApplicationModule sInstance;
+    private static ActionModule sInstance;
 
     private PedometerManager mPedometerManager;// 计步器管理类:通知和定时器等
     private PedometerCore mPedometerRepository;
@@ -19,16 +18,15 @@ public class ApplicationModule {
     /**
      * 初始化单例,在程序启动时调用<br>
      */
-    public static ApplicationModule initSingleton() {
+    public static ActionModule initSingleton() {
         if (sInstance == null) {
-            sInstance = new ApplicationModule();
+            sInstance = new ActionModule();
         }
-
         return sInstance;
     }
 
 
-    public static ApplicationModule getInstance() {
+    public static ActionModule getInstance() {
         return sInstance;
     }
 
@@ -39,7 +37,7 @@ public class ApplicationModule {
     }
 
 
-    private ApplicationModule() {
+    private ActionModule() {
         mAppContent = BaseApplication.getInstances().getAppContext();
     }
 
@@ -51,12 +49,5 @@ public class ApplicationModule {
     public PedometerCore getPedometerRepository() {
         return mPedometerRepository;
     }
-
-    public void setPedometerUpDateListener(PedometerUpDateListener pedometerUpDateListener) {
-        if (mPedometerRepository != null) {
-            mPedometerRepository.setPedometerUpDateListener(pedometerUpDateListener);
-        }
-    }
-
 
 }

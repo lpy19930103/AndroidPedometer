@@ -3,7 +3,6 @@ package com.lipy.step.pedometer;
 import com.lipy.step.common.BaseApplication;
 import com.lipy.step.dao.PedometerEntity;
 import com.lipy.step.dao.PedometerEntityDao;
-import com.lipy.step.result.IGetPedometerResult;
 import com.lipy.step.result.PedometerUpDateListener;
 import com.lipy.step.utils.TimeUtil;
 
@@ -21,7 +20,7 @@ import java.util.List;
  * 计步器实现类
  * Created by lipy on 2017/4/10 0010.
  */
-public class PedometerCore implements SensorEventListener, PedometerRepository {
+public class PedometerCore implements SensorEventListener {
 
     private static String TAG = "PedometerCore";
 
@@ -207,11 +206,6 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
 
     }
 
-    @Override
-    public void getPedometerStep(IGetPedometerResult result) {
-
-        result.onSuccessGet(mTodayStepEntity);
-    }
 
     public void onDestroy() {
         CURRENT_STEP = 0;

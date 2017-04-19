@@ -4,7 +4,7 @@ package com.lipy.step.view;
  */
 
 import com.lipy.step.R;
-import com.lipy.step.utils.Constant;
+import com.lipy.step.common.Constants;
 import com.lipy.step.utils.MiscUtil;
 
 import android.animation.ValueAnimator;
@@ -95,7 +95,7 @@ public class AnnulusProgress extends View {
 
     private void init(Context context, AttributeSet attrs) {
         mContext = context;
-        mDefaultSize = MiscUtil.dipToPx(mContext, Constant.DEFAULT_SIZE);
+        mDefaultSize = MiscUtil.dipToPx(mContext, Constants.DEFAULT_SIZE);
         mAnimator = new ValueAnimator();
         mRectF = new RectF();
         mCenterPoint = new Point();
@@ -107,34 +107,34 @@ public class AnnulusProgress extends View {
     private void initAttrs(AttributeSet attrs) {
         TypedArray typedArray = mContext.obtainStyledAttributes(attrs, R.styleable.AnnulusProgress);
 
-        antiAlias = typedArray.getBoolean(R.styleable.AnnulusProgress_antiAlias, Constant.ANTI_ALIAS);
+        antiAlias = typedArray.getBoolean(R.styleable.AnnulusProgress_antiAlias, Constants.ANTI_ALIAS);
 
         mHint = typedArray.getString(R.styleable.AnnulusProgress_hint);
         mHintColor = typedArray.getColor(R.styleable.AnnulusProgress_hintColor, Color.BLACK);
-        mHintSize = typedArray.getDimension(R.styleable.AnnulusProgress_hintSize, Constant.DEFAULT_HINT_SIZE);
+        mHintSize = typedArray.getDimension(R.styleable.AnnulusProgress_hintSize, Constants.DEFAULT_HINT_SIZE);
 
-        mValue = typedArray.getFloat(R.styleable.AnnulusProgress_value, Constant.DEFAULT_VALUE);
-        mMaxValue = typedArray.getFloat(R.styleable.AnnulusProgress_maxValue, Constant.DEFAULT_MAX_VALUE);
+        mValue = typedArray.getFloat(R.styleable.AnnulusProgress_value, Constants.DEFAULT_VALUE);
+        mMaxValue = typedArray.getFloat(R.styleable.AnnulusProgress_maxValue, Constants.DEFAULT_MAX_VALUE);
         //内容数值精度格式
         mPrecision = typedArray.getInt(R.styleable.AnnulusProgress_precision, 0);
         mPrecisionFormat = MiscUtil.getPrecisionFormat(mPrecision);
         mValueColor = typedArray.getColor(R.styleable.AnnulusProgress_valueColor, Color.BLACK);
-        mValueSize = typedArray.getDimension(R.styleable.AnnulusProgress_valueSize, Constant.DEFAULT_VALUE_SIZE);
+        mValueSize = typedArray.getDimension(R.styleable.AnnulusProgress_valueSize, Constants.DEFAULT_VALUE_SIZE);
 
         mUnit = typedArray.getString(R.styleable.AnnulusProgress_unit);
         mUnitColor = typedArray.getColor(R.styleable.AnnulusProgress_unitColor, Color.BLACK);
-        mUnitSize = typedArray.getDimension(R.styleable.AnnulusProgress_unitSize, Constant.DEFAULT_UNIT_SIZE);
+        mUnitSize = typedArray.getDimension(R.styleable.AnnulusProgress_unitSize, Constants.DEFAULT_UNIT_SIZE);
 
-        mArcWidth = typedArray.getDimension(R.styleable.AnnulusProgress_arcWidth, Constant.DEFAULT_ARC_WIDTH);
-        mStartAngle = typedArray.getFloat(R.styleable.AnnulusProgress_startAngle, Constant.DEFAULT_START_ANGLE);
-        mSweepAngle = typedArray.getFloat(R.styleable.AnnulusProgress_sweepAngle, Constant.DEFAULT_SWEEP_ANGLE);
+        mArcWidth = typedArray.getDimension(R.styleable.AnnulusProgress_arcWidth, Constants.DEFAULT_ARC_WIDTH);
+        mStartAngle = typedArray.getFloat(R.styleable.AnnulusProgress_startAngle, Constants.DEFAULT_START_ANGLE);
+        mSweepAngle = typedArray.getFloat(R.styleable.AnnulusProgress_sweepAngle, Constants.DEFAULT_SWEEP_ANGLE);
 
         mBgArcColor = typedArray.getColor(R.styleable.AnnulusProgress_bgArcColor, Color.WHITE);
-        mBgArcWidth = typedArray.getDimension(R.styleable.AnnulusProgress_bgArcWidth, Constant.DEFAULT_ARC_WIDTH);
+        mBgArcWidth = typedArray.getDimension(R.styleable.AnnulusProgress_bgArcWidth, Constants.DEFAULT_ARC_WIDTH);
         mTextOffsetPercentInRadius = typedArray.getFloat(R.styleable.AnnulusProgress_textOffsetPercentInRadius, 0.33f);
 
         //mPercent = typedArray.getFloat(R.styleable.AnnulusProgress_percent, 0);
-        mAnimTime = typedArray.getInt(R.styleable.AnnulusProgress_animTime, Constant.DEFAULT_ANIM_TIME);
+        mAnimTime = typedArray.getInt(R.styleable.AnnulusProgress_animTime, Constants.DEFAULT_ANIM_TIME);
 
         int gradientArcColors = typedArray.getResourceId(R.styleable.AnnulusProgress_arcColors, 0);
         if (gradientArcColors != 0) {
