@@ -1,7 +1,6 @@
 package com.lipy.step.pedometer;
 
 import com.lipy.step.common.BaseApplication;
-import com.lipy.step.common.PedometerEvent;
 import com.lipy.step.dao.PedometerEntity;
 import com.lipy.step.dao.PedometerEntityDao;
 import com.lipy.step.result.IGetPedometerResult;
@@ -52,13 +51,14 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
 
 
     public PedometerCore() {
-        mContext = BaseApplication.getAppContext();
+        mContext = BaseApplication.getInstances().getAppContext();
     }
 
     /**
      *  初始化传感器相关数据
      */
     public void initData(int tagStep) {
+        Log.e(TAG, "initData tagStep = " + tagStep);
         TAG_STEP = tagStep;
         CURRENT_STEP = 0;
         BaseApplication.getInstances().setDatabase(mContext);
@@ -108,9 +108,9 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
                             mTodayStepEntity = pedometerEntity;
                             Log.e(TAG, "还是今天 复用今天的Entity");
                         } else if (TimeUtil.IsYesterday(date) && mPedometerEntities.size() > 1) {//跨天
-                            Log.e(TAG, "是昨天 创建新的Entity ");
                             PedometerEntity pedometerEntity1 = mPedometerEntities.get(mPedometerEntities.size() - 2);
                             if (pedometerEntity1.getPunchCard()) {//打过卡
+                                Log.e(TAG, "是昨天 创建新的Entity ");
                                 if (CURRENT_TOTAL_STEPS > pedometerEntity1.getTotalSteps()) {//没有关机
                                     mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false);
                                 } else {
@@ -125,7 +125,7 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
                                 mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false));
                                 mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false);
                                 mPedometerEntityDao.insert(mTodayStepEntity);
-                                Log.e(TAG, "第一次安装创建2个Entity=  " + mPedometerEntityDao.loadAll().size());
+                                Log.e(TAG, "前一天未打卡 创建2个Entity=  " + mPedometerEntityDao.loadAll().size());
                             }
                         } else if (mPedometerEntities.size() > 1) {
 
@@ -134,7 +134,7 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
                             mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false));
                             mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false);
                             mPedometerEntityDao.insert(mTodayStepEntity);
-                            Log.e(TAG, "第一次安装创建2个Entity=  " + mPedometerEntityDao.loadAll().size());
+                            Log.e(TAG, "跨天 未计数 创建2个Entity=  " + mPedometerEntityDao.loadAll().size());
 
                         }
                     }
@@ -207,23 +207,6 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
 
     }
 
-
-    /**
-     * 获取行走步数
-     */
-    private void showSteps(int steps) {
-        if (steps < 0) {
-            return;
-        }
-
-        mTodayStepEntity.setDailyStep(steps);
-
-        PedometerEvent event = new PedometerEvent();
-        event.mIsUpdate = true;
-        BaseApplication.postEvent(event);
-
-    }
-
     @Override
     public void getPedometerStep(IGetPedometerResult result) {
 
@@ -237,7 +220,7 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
 
     private void countDown() {
         if (mCountDownTimer == null) {
-            mCountDownTimer = new CountDownTimer(600000, 1000) {
+            mCountDownTimer = new CountDownTimer(300000, 1000) {
                 @Override
                 public void onTick(long l) {
                     //倒计时每秒的回调
@@ -256,8 +239,9 @@ public class PedometerCore implements SensorEventListener, PedometerRepository {
                     }
                 }
             };
+        } else {
+            mCountDownTimer.cancel();
         }
-        mCountDownTimer.cancel();
         mCountDownTimer.start();
     }
 }

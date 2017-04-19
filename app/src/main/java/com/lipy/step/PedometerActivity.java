@@ -38,7 +38,6 @@ public class PedometerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        BaseApplication.getInstances().setDatabase(this);
         PedometerEntityDao pedometerEntityDao = BaseApplication.getInstances().getDaoSession().getPedometerEntityDao();
         List<PedometerEntity> pedometerEntities = pedometerEntityDao.loadAll();
         if (pedometerEntityDao != null && pedometerEntities != null && pedometerEntities.size() > 0) {
@@ -48,24 +47,6 @@ public class PedometerActivity extends AppCompatActivity {
             mAnnulusProgress.setMaxValue(5000);
             mAnnulusProgress.setProgress(pedometerEntity.getDailyStep());
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        ApplicationModule.getInstance().getPedometerManager().unbindPedometerService();
-
-    }
-
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            ApplicationModule.getInstance().getPedometerManager().unbindPedometerService();
-            finish();
-            return true;
-        }
-        return false;
     }
 
 }

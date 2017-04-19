@@ -1,19 +1,16 @@
 package com.lipy.step;
 
 import com.lipy.step.common.Constants;
-import com.lipy.step.common.PedometerEvent;
 import com.lipy.step.pedometer.ApplicationModule;
 import com.lipy.step.utils.HardwarePedometerUtil;
 import com.lipy.step.utils.PermissionUtils;
-
-import org.greenrobot.eventbus.Subscribe;
 
 import android.Manifest;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -83,16 +80,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    /**
-     * 监听数据
-     */
-    @Subscribe
-    public void onEventMainThread(PedometerEvent event) {
-        Log.e("lipy", "onEventMainThread");
-        if (event.mIsUpdate) {
-        }
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -105,6 +92,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
+
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            ApplicationModule.getInstance().getPedometerManager().unbindPedometerService();
+            finish();
+            return true;
+        }
+        return false;
+    }
+
 
 
 

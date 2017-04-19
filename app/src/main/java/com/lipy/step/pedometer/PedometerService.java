@@ -91,7 +91,7 @@ public class PedometerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mContext = BaseApplication.getAppContext();
+        mContext = BaseApplication.getInstances().getAppContext();
         Log.i(TAG, "PedometerService onCreate");
         mPedometerCore = ApplicationModule.getInstance().getPedometerRepository();
         mPedometerCore.initData(TAG_STEP);

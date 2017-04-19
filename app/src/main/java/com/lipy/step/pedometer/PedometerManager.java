@@ -47,7 +47,7 @@ public class PedometerManager {
 
 
     public PedometerManager() {
-        mContext = BaseApplication.getAppContext();
+        mContext = BaseApplication.getInstances().getAppContext();
         mService = new Intent(mContext, PedometerService.class);
 //        ComponentName componentName = new ComponentName(
 //                PACKAGE_SERVICE,
@@ -69,7 +69,6 @@ public class PedometerManager {
      */
     public void startPedometerService() {
         mContext.startService(mService);
-
         mBindService = mContext.bindService(mService, mServiceConnection, Context.BIND_AUTO_CREATE);
         IsServiceRunning = true;
     }
@@ -84,8 +83,10 @@ public class PedometerManager {
     }
 
     public void unbindPedometerService() {
-        if (mServiceConnection != null && mBindService) {
+        Log.e("lipy", "unbindPedometerService = " + mBindService);
+        if (mBindService) {
             mContext.unbindService(mServiceConnection);
+            mBindService = false;
         }
     }
 
@@ -100,13 +101,17 @@ public class PedometerManager {
             for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
                 if ("com.lipy.step.pedometer.PedometerService".equals(service.service.getClassName())) {
                     IsServiceRunning = true;
+
                 }
             }
-
             Log.i("lipy", "checkServiceStart mIsServiceRunning = " + IsServiceRunning);
 
-            if (!IsServiceRunning) {
+
+            if (IsServiceRunning) {
+                mBindService = mContext.bindService(mService, mServiceConnection, Context.BIND_AUTO_CREATE);
+            } else {
                 startPedometerService();
+
             }
         }
 

@@ -40,7 +40,7 @@ public class ApplicationModule {
 
 
     private ApplicationModule() {
-        mAppContent = BaseApplication.getAppContext();
+        mAppContent = BaseApplication.getInstances().getAppContext();
     }
 
 
