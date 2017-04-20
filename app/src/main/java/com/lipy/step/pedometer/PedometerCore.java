@@ -44,7 +44,7 @@ public class PedometerCore implements SensorEventListener {
 
     private PedometerEntity mYesterdayPedometerEntity;
 
-    private static int TAG_STEP = 0;
+    private static int TAG_STEP = 8000;
 
     private CountDownTimer mCountDownTimer;
 
@@ -57,15 +57,15 @@ public class PedometerCore implements SensorEventListener {
      *  初始化传感器相关数据
      */
     public void initData(int tagStep) {
-        Log.e(TAG, "initData tagStep = " + tagStep);
-        TAG_STEP = tagStep;
+
+//        TAG_STEP = tagStep;
         CURRENT_STEP = 0;
         BaseApplication.getInstances().setDatabase(mContext);
         mPedometerEntityDao = BaseApplication.getInstances().getDaoSession().getPedometerEntityDao();
         List<PedometerEntity> pedometerEntities = mPedometerEntityDao.loadAll();
-        if (pedometerEntities.size() > 1) {
+        if (pedometerEntities != null && pedometerEntities.size() > 0) {
             PedometerEntity pedometerEntity = pedometerEntities.get(pedometerEntities.size() - 1);
-            pedometerEntity.setDate("2017-4-18");
+//            pedometerEntity.setDate("2017-4-18");//test code
             if (TimeUtil.IsYesterday(pedometerEntity.getDate())) {//昨天
                 if (!pedometerEntity.getPunchCard()) {//未打卡
                     Log.e(TAG, "是昨天未打卡 删除");

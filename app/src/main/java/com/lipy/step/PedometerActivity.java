@@ -37,13 +37,14 @@ public class PedometerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
         PedometerEntityDao pedometerEntityDao = BaseApplication.getInstances().getDaoSession().getPedometerEntityDao();
         List<PedometerEntity> pedometerEntities = pedometerEntityDao.loadAll();
         if (pedometerEntityDao != null && pedometerEntities != null && pedometerEntities.size() > 0) {
             PedometerEntity pedometerEntity = pedometerEntities.get(pedometerEntities.size() - 1);
             Log.e("lipy", "pedometerEntity.getTagStep()" + pedometerEntity.getTagStep());
             Log.e("lipy", "pedometerEntity.getDailyStep()" + pedometerEntity.getDailyStep());
-            mAnnulusProgress.setMaxValue(5000);
+            mAnnulusProgress.setMaxValue(pedometerEntity.getTagStep());
             mAnnulusProgress.setProgress(pedometerEntity.getDailyStep());
         }
     }
