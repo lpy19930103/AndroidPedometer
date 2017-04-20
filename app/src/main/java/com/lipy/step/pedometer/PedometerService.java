@@ -97,7 +97,6 @@ public class PedometerService extends Service {
         mContext = BaseApplication.getInstances().getAppContext();
         Log.i(TAG, "PedometerService onCreate");
         mPedometerCore = ActionModule.getInstance().getPedometerRepository();
-        mPedometerCore.initData(TAG_STEP);
         mPedometerCore.setPedometerUpDateListener(new PedometerUpDateListener() {
             @Override
             public void PedometerUpDate(PedometerEntity pedometerEntity) {
@@ -123,9 +122,10 @@ public class PedometerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "PedometerService onStartCommand");
-
+        mPedometerCore.initData(TAG_STEP);
+        //
         AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(ALARM_SERVICE);
-        long triggerAtTime = SystemClock.elapsedRealtime() + 10000;
+        long triggerAtTime = SystemClock.elapsedRealtime() + 600000;
 
         Intent i = new Intent(this, AlarmBroadcastReceiver.class);
 
