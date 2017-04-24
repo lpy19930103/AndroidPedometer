@@ -184,7 +184,7 @@ public class PedometerCore implements SensorEventListener {
                         Log.e(TAG, "纠正总步数1 = " + CURRENT_TOTAL_STEPS);
 
                         if (mTodayStepEntity.getTotalSteps() > CURRENT_TOTAL_STEPS) {
-                            if (LAST_SYSTEM_STEPS != 0 || CURRENT_STEP != 0) {
+                            if (CURRENT_STEP != 0) {
                                 CURRENT_TOTAL_STEPS = mTodayStepEntity.getTotalSteps() + CURRENT_STEP;//纠正总步数
                             } else {
                                 CURRENT_TOTAL_STEPS += mTodayStepEntity.getTotalSteps();//纠正总步数
@@ -193,7 +193,7 @@ public class PedometerCore implements SensorEventListener {
                         }
                     } else if (mTodayStepEntity.getReStart()) {//当前是重启状态
 
-                        if (LAST_SYSTEM_STEPS != 0 || CURRENT_STEP != 0) {
+                        if (CURRENT_STEP != 0) {
                             CURRENT_TOTAL_STEPS = mTodayStepEntity.getTotalSteps() + CURRENT_STEP;
                         } else {
                             CURRENT_TOTAL_STEPS += mTodayStepEntity.getTotalSteps();

@@ -11,6 +11,7 @@ import com.lipy.step.view.AnnulusProgress;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.TextView;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class PedometerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedometer);
+        ActionModule.getInstance().getPedometerManager().checkServiceStart();
         mAnnulusProgress = (AnnulusProgress) findViewById(R.id.pedometer_progress);
         mDate = (TextView) findViewById(R.id.date);
         ActionModule.getInstance().getPedometerManager().setPedometerUpDateResult(new PedometerUpDateResult() {
@@ -59,6 +61,16 @@ public class PedometerActivity extends AppCompatActivity {
             }
 
         }
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            ActionModule.getInstance().getPedometerManager().unbindPedometerService();
+            finish();
+            return true;
+        }
+        return false;
     }
 
 }

@@ -13,7 +13,7 @@
             android:label="step"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".PedometerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -51,7 +51,7 @@
             <!--</intent-filter>-->
         </receiver>
 
-        <activity android:name=".PedometerActivity">
+        <activity android:name=".MainActivity">
         </activity>
     </application>
 
