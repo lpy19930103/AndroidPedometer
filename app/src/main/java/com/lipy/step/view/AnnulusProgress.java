@@ -277,13 +277,13 @@ public class AnnulusProgress extends View {
         canvas.save();
         float currentAngle = mSweepAngle * mPercent;
         canvas.rotate(mStartAngle, mCenterPoint.x, mCenterPoint.y);
-        canvas.drawArc(mRectF, currentAngle, mSweepAngle - currentAngle + 2, false, mBgArcPaint);
+        canvas.drawArc(mRectF, currentAngle, mSweepAngle - currentAngle, false, mBgArcPaint);
         // 第一个参数 oval 为 RectF 类型，即圆弧显示区域
         // startAngle 和 sweepAngle  均为 float 类型，分别表示圆弧起始角度和圆弧度数
         // 3点钟方向为0度，顺时针递增
         // 如果 startAngle < 0 或者 > 360,则相当于 startAngle % 360
         // useCenter:如果为True时，在绘制圆弧时将圆心包括在内，通常用来绘制扇形
-        canvas.drawArc(mRectF, 2, currentAngle, false, mArcPaint);
+        canvas.drawArc(mRectF, 0, currentAngle, false, mArcPaint);
         canvas.restore();
     }
 
@@ -327,13 +327,18 @@ public class AnnulusProgress extends View {
     public void setProgress(float progress) {
         if (progress > mMaxValue) {
             progress = mMaxValue;
+        } else if (progress <= 0) {
+            progress = 1;
         }
+
         float start = mPercent;
 
-        if (mMaxValue == 0) mMaxValue = 5000;
+        if (mMaxValue == 0) {
+            mMaxValue = 5000;
+        }
+
         BigDecimal bigDecimal1 = new BigDecimal(Float.toString(progress));
         BigDecimal bigDecimal2 = new BigDecimal(Float.toString(mMaxValue));
-
         float end = bigDecimal1.divide(bigDecimal2).floatValue();
 
         Log.e("lipy", "end = " + end);

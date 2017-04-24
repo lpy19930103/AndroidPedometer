@@ -62,7 +62,9 @@ public class PedometerCore implements SensorEventListener {
         CURRENT_STEP = 0;
         BaseApplication.getInstances().setDatabase(mContext);
         mPedometerEntityDao = BaseApplication.getInstances().getDaoSession().getPedometerEntityDao();
+
         List<PedometerEntity> pedometerEntities = mPedometerEntityDao.loadAll();
+
         if (pedometerEntities != null && pedometerEntities.size() > 0) {
             PedometerEntity pedometerEntity = pedometerEntities.get(pedometerEntities.size() - 1);
 //            pedometerEntity.setDate("2017-4-18");//test code
@@ -109,6 +111,11 @@ public class PedometerCore implements SensorEventListener {
 
                 CURRENT_TOTAL_STEPS = (int) event.values[0];
                 CURRENT_STEP = CURRENT_TOTAL_STEPS - LAST_SYSTEM_STEPS;
+
+                //系统在每次手机静止不动一会时间 下次记步会记录7步
+                if (CURRENT_STEP >= 7) {
+                    CURRENT_STEP = 1;
+                }
 
                 Log.e(TAG, "**************************Date =" + TimeUtil.getStringDateShort());
                 Log.e(TAG, "CURRENT_TOTAL_STEPS = " + CURRENT_TOTAL_STEPS);

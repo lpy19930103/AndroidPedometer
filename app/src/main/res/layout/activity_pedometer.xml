@@ -9,15 +9,24 @@
         tools:context="com.lipy.step.PedometerActivity">
 
 
+    <RelativeLayout android:layout_width="match_parent"
+                  android:layout_height="180dp">
+        <TextView android:layout_width="wrap_content"
+                  android:layout_centerInParent="true"
+                  android:textSize="30sp"
+                  android:text="爱运动,爱生活"
+                  android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
 
     <com.lipy.step.view.AnnulusProgress
             android:id="@+id/pedometer_progress"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
             android:layout_gravity="center"
             app:antiAlias="false"
             app:arcWidth="15dp"
-            app:bgArcColor="#d1a6a6"
+            app:bgArcColor="#e6e3e3"
             app:bgArcWidth="15dp"
             app:hint="截止当前已走"
             app:hintSize="15sp"
@@ -29,5 +38,12 @@
             app:value="1"
             app:valueSize="25sp"/>
 
-
+    <TextView android:layout_width="match_parent"
+              android:id="@+id/date"
+              android:paddingRight="20dp"
+              android:gravity="right"
+              android:layout_centerInParent="true"
+              android:textSize="20sp"
+              android:text="爱运动,爱生活"
+              android:layout_height="wrap_content"/>
 </LinearLayout>
