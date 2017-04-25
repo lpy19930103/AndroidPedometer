@@ -109,7 +109,7 @@ public class PedometerCore implements SensorEventListener {
             if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
                 TimeUtil.getYesterday();
                 //倒计时
-                countDown();
+//                countDown();
 
                 CURRENT_TOTAL_STEPS = (int) event.values[0];
                 CURRENT_STEP = CURRENT_TOTAL_STEPS - LAST_SYSTEM_STEPS;
@@ -134,7 +134,7 @@ public class PedometerCore implements SensorEventListener {
                             mTodayStepEntity = pedometerEntity;
                             Log.e(TAG, "还是今天 复用今天的Entity");
                         } else if (TimeUtil.IsYesterday(date)) {//跨天
-                            if (pedometerEntity.getPunchCard()) {//打过卡
+                            if (pedometerEntity.getPunchCard()) {//打过卡 区分步数算入那一天
                                 Log.e(TAG, "是昨天 创建新的Entity ");
                                 if (CURRENT_TOTAL_STEPS > pedometerEntity.getTotalSteps()) {//没有关机
                                     mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false);
@@ -152,16 +152,16 @@ public class PedometerCore implements SensorEventListener {
                                 mPedometerEntityDao.update(pedometerEntity);
                                 mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false);
                                 mPedometerEntityDao.insert(mTodayStepEntity);
-                                Log.e(TAG, "前一天未打卡 创建2个Entity=  " + mPedometerEntityDao.loadAll().size());
+                                Log.e(TAG, "前一天未打卡");
                             }
                         } else {
 
-                            //如果是跨天的情况下 就清掉数据库 从新开始记步
+                            //如果是跨天的情况下
 //                            mPedometerEntityDao.deleteAll();
                             mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getYesterday(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false));
                             mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false);
                             mPedometerEntityDao.insert(mTodayStepEntity);
-                            Log.e(TAG, "跨天 未计数 创建2个Entity=  " + mPedometerEntityDao.loadAll().size());
+                            Log.e(TAG, "跨天");
 
                         }
                     } else {
@@ -169,7 +169,7 @@ public class PedometerCore implements SensorEventListener {
                         mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getYesterday(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false));
                         mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false);
                         mPedometerEntityDao.insert(mTodayStepEntity);
-                        Log.e(TAG, "日期为null 数据异常= " + mPedometerEntityDao.loadAll().size());
+                        Log.e(TAG, "日期为null 脏数据");
                     }
 
                 } else {
@@ -187,7 +187,6 @@ public class PedometerCore implements SensorEventListener {
                         mYesterdayPedometerEntity = mPedometerEntities.get(mPedometerEntities.size() - 2);
                     }
 
-                    //// TODO: 2017/4/24 0024 需要处理当 步数走了很多之后才开启service的情况
                     if (CURRENT_TOTAL_STEPS < mYesterdayPedometerEntity.getTotalSteps()) {//当前系统步数 < 昨日记录总步数 判断为重启手机
                         mTodayStepEntity.setReStart(true);
 
@@ -247,32 +246,32 @@ public class PedometerCore implements SensorEventListener {
         mTodayStepEntity = null;
     }
 
-    private void countDown() {
-        if (mCountDownTimer == null) {
-            mCountDownTimer = new CountDownTimer(300000, 1000) {
-                @Override
-                public void onTick(long l) {
-                    //倒计时每秒的回调
-                }
-
-                @Override
-                public void onFinish() {
-                    //倒计时结束
-                    if (mTodayStepEntity != null &&
-                            mTodayStepEntity.getDailyStep() >= DAILY_STEP &&
-                            mTodayStepEntity.getDailyStep() >= DAILY_STEP) {
-
-                        mTodayStepEntity.setTotalSteps(CURRENT_TOTAL_STEPS);
-                        mTodayStepEntity.setDailyStep(DAILY_STEP);
-
-                        Log.e(TAG, "无操作倒计时 每日步数= " + mTodayStepEntity.getDailyStep());
-                    }
-                }
-            };
-        } else {
-            mCountDownTimer.cancel();
-        }
-        mCountDownTimer.start();
-    }
+//    private void countDown() {
+//        if (mCountDownTimer == null) {
+//            mCountDownTimer = new CountDownTimer(300000, 1000) {
+//                @Override
+//                public void onTick(long l) {
+//                    //倒计时每秒的回调
+//                }
+//
+//                @Override
+//                public void onFinish() {
+//                    //倒计时结束
+//                    if (mTodayStepEntity != null &&
+//                            mTodayStepEntity.getDailyStep() >= DAILY_STEP &&
+//                            mTodayStepEntity.getDailyStep() >= DAILY_STEP) {
+//
+//                        mTodayStepEntity.setTotalSteps(CURRENT_TOTAL_STEPS);
+//                        mTodayStepEntity.setDailyStep(DAILY_STEP);
+//
+//                        Log.e(TAG, "无操作倒计时 每日步数= " + mTodayStepEntity.getDailyStep());
+//                    }
+//                }
+//            };
+//        } else {
+//            mCountDownTimer.cancel();
+//        }
+//        mCountDownTimer.start();
+//    }
 
 }
