@@ -39,12 +39,6 @@ public class AnnulusProgress extends View {
     private int mDefaultSize;
     //是否开启抗锯齿
     private boolean antiAlias;
-    //绘制提示
-    private TextPaint mHintPaint;
-    private CharSequence mHint;
-    private int mHintColor;
-    private float mHintSize;
-    private float mHintOffset;
 
     //绘制单位
     private TextPaint mUnitPaint;
@@ -115,10 +109,6 @@ public class AnnulusProgress extends View {
 
         antiAlias = typedArray.getBoolean(R.styleable.AnnulusProgress_antiAlias, Constants.ANTI_ALIAS);
 
-        mHint = typedArray.getString(R.styleable.AnnulusProgress_hint);
-        mHintColor = typedArray.getColor(R.styleable.AnnulusProgress_hintColor, Color.BLACK);
-        mHintSize = typedArray.getDimension(R.styleable.AnnulusProgress_hintSize, Constants.DEFAULT_HINT_SIZE);
-
         mValue = typedArray.getFloat(R.styleable.AnnulusProgress_value, Constants.DEFAULT_VALUE);
         mMaxValue = typedArray.getFloat(R.styleable.AnnulusProgress_maxValue, Constants.DEFAULT_MAX_VALUE);
         //内容数值精度格式
@@ -170,16 +160,6 @@ public class AnnulusProgress extends View {
     }
 
     private void initPaint() {
-        mHintPaint = new TextPaint();
-        // 设置抗锯齿,会消耗较大资源，绘制图形速度会变慢。
-        mHintPaint.setAntiAlias(antiAlias);
-        // 设置绘制文字大小
-        mHintPaint.setTextSize(mHintSize);
-        // 设置画笔颜色
-        mHintPaint.setColor(mHintColor);
-        // 从中间向两边绘制，不需要再次计算文字
-        mHintPaint.setTextAlign(Paint.Align.CENTER);
-
         mValuePaint = new TextPaint();
         mValuePaint.setAntiAlias(antiAlias);
         mValuePaint.setTextSize(mValueSize);
@@ -246,14 +226,9 @@ public class AnnulusProgress extends View {
         //计算文字绘制时的 baseline
         //由于文字的baseline、descent、ascent等属性只与textSize和typeface有关，所以此时可以直接计算
         //若value、hint、unit由同一个画笔绘制或者需要动态设置文字的大小，则需要在每次更新后再次计算
-        mValueOffset = mCenterPoint.y + getBaselineOffsetFromY(mValuePaint);
-        mHintOffset = mCenterPoint.y - mRadius * mTextOffsetPercentInRadius + getBaselineOffsetFromY(mHintPaint);
-        mUnitOffset = mCenterPoint.y + mRadius * mTextOffsetPercentInRadius + getBaselineOffsetFromY(mUnitPaint);
+        mValueOffset = mCenterPoint.y ;
+        mUnitOffset = mCenterPoint.y + mRadius * mTextOffsetPercentInRadius ;
         updateArcPaint();
-        Log.d(TAG, "onSizeChanged: 控件大小 = " + "(" + w + ", " + h + ")"
-                + "圆心坐标 = " + mCenterPoint.toString()
-                + ";圆半径 = " + mRadius
-                + ";圆的外接矩形 = " + mRectF.toString());
     }
 
     private float getBaselineOffsetFromY(Paint paint) {
@@ -276,10 +251,6 @@ public class AnnulusProgress extends View {
         // float textWidth = mValuePaint.measureText(mValue.toString());
         // float x = mCenterPoint.x - textWidth / 2;
         canvas.drawText(String.format(mPrecisionFormat, mValue), mCenterPoint.x, mValueOffset, mValuePaint);
-
-        if (mHint != null) {
-            canvas.drawText(mHint.toString(), mCenterPoint.x, mHintOffset, mHintPaint);
-        }
 
         if (mUnit != null) {
             canvas.drawText(mUnit.toString(), mCenterPoint.x, mUnitOffset, mUnitPaint);
@@ -330,14 +301,6 @@ public class AnnulusProgress extends View {
         return antiAlias;
     }
 
-    public CharSequence getHint() {
-        return mHint;
-    }
-
-    public void setHint(CharSequence hint) {
-        mHint = hint;
-    }
-
     public CharSequence getUnit() {
         return mUnit;
     }
@@ -361,11 +324,10 @@ public class AnnulusProgress extends View {
         }
 
         float start = mPercent;
-        progress = 5000;
         if (mMaxValue == 0) {
             mMaxValue = 8000;
         }
-
+        progress = 7000;
         BigDecimal bigDecimal1 = new BigDecimal(Float.toString(progress));
         BigDecimal bigDecimal2 = new BigDecimal(Float.toString(mMaxValue));
         float end = bigDecimal1.divide(bigDecimal2).floatValue();
@@ -382,9 +344,6 @@ public class AnnulusProgress extends View {
             public void onAnimationUpdate(ValueAnimator animation) {
                 mPercent = (float) animation.getAnimatedValue();
                 mValue = mPercent * mMaxValue;
-//                Log.d(TAG, "onAnimationUpdate: percent = " + mPercent
-//                        + ";currentAngle = " + (mSweepAngle * mPercent)
-//                        + ";value = " + mValue);
                 invalidate();
             }
         });

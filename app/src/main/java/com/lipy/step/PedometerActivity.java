@@ -12,7 +12,6 @@ import com.lipy.step.view.AnnulusProgress;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
-import android.widget.TextView;
 
 import java.util.List;
 
@@ -23,7 +22,6 @@ import java.util.List;
 public class PedometerActivity extends AppCompatActivity {
 
     private AnnulusProgress mAnnulusProgress;
-    private TextView mDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +29,6 @@ public class PedometerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pedometer);
         ActionModule.getInstance().getPedometerManager().checkServiceStart();
         mAnnulusProgress = (AnnulusProgress) findViewById(R.id.pedometer_progress);
-        mDate = (TextView) findViewById(R.id.date);
         ActionModule.getInstance().getPedometerManager().setPedometerUpDateResult(new PedometerUpDateResult() {
             @Override
             public void onPedometerUpDate(PedometerEntity entity) {
@@ -56,7 +53,6 @@ public class PedometerActivity extends AppCompatActivity {
 //            Log.e("lipy", "pedometerEntity.getTagStep()" + pedometerEntity.getTagStep());
 //            Log.e("lipy", "pedometerEntity.getDailyStep()" + pedometerEntity.getDailyStep());
             mAnnulusProgress.setMaxValue(pedometerEntity.getTagStep());
-            mDate.setText(pedometerEntity.getDate());
             if (TimeUtil.IsYesterday(pedometerEntity.getDate())) {
                 mAnnulusProgress.setProgress(0);
             } else {

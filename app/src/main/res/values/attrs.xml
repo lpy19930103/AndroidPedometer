@@ -48,10 +48,7 @@
             <attr name="valueSize" />
             <attr name="valueColor" />
             <attr name="textOffsetPercentInRadius" />
-            <!-- 绘制内容相应的提示语 -->
-            <attr name="hint" />
-            <attr name="hintSize" />
-            <attr name="hintColor" />
+
             <!-- 绘制内容的单位 -->
             <attr name="unit" />
             <attr name="unitSize" />
