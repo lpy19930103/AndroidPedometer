@@ -104,4 +104,16 @@ public class TimeUtil {
         return instance.get(Calendar.HOUR_OF_DAY);
     }
 
+    /**
+     * 获取昨天的日期
+     * @return
+     */
+    public static String getYesterday() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        String yesterday = new SimpleDateFormat("yyyy-MM-dd ").format(cal.getTime());
+        Log.e("LIPY", "yesterday = " + yesterday);
+        return yesterday;
+    }
+
 }

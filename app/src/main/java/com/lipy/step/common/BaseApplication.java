@@ -29,7 +29,7 @@ public class BaseApplication extends Application {
         super.onCreate();
         instances = this;
         setDatabase(this);
-        ActionModule.initSingleton().onCreateMainProcess();
+        ActionModule.getInstance().onCreateMainProcess();
     }
 
     public Context getAppContext() {

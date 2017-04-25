@@ -1,4 +1,4 @@
-package com.lipy.step.pedometer;
+package com.lipy.step.utils;
 
 import android.os.Handler;
 import android.os.Message;

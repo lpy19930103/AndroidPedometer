@@ -6,23 +6,16 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/step_bg"
         tools:context="com.lipy.step.PedometerActivity">
 
 
-    <RelativeLayout android:layout_width="match_parent"
-                  android:layout_height="180dp">
-        <TextView android:layout_width="wrap_content"
-                  android:layout_centerInParent="true"
-                  android:textSize="30sp"
-                  android:text="爱运动,爱生活"
-                  android:layout_height="wrap_content"/>
-
-    </RelativeLayout>
 
     <com.lipy.step.view.AnnulusProgress
+            android:layout_marginTop="249dp"
             android:id="@+id/pedometer_progress"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
+            android:layout_width="178dp"
+            android:layout_height="178dp"
             android:layout_gravity="center"
             app:antiAlias="false"
             app:arcWidth="15dp"

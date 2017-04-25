@@ -56,7 +56,7 @@ public class AnnulusProgress extends View {
     //绘制数值
     private TextPaint mValuePaint;
     private float mValue = 1;
-    private float mMaxValue = 5000;
+    private float mMaxValue = 8000;
     private float mValueOffset;
     private int mPrecision;
     private String mPrecisionFormat;
@@ -77,11 +77,17 @@ public class AnnulusProgress extends View {
     private long mAnimTime;
     //属性动画
     private ValueAnimator mAnimator;
-
     //绘制背景圆弧
     private Paint mBgArcPaint;
     private int mBgArcColor;
     private float mBgArcWidth;
+
+    private int mDialIntervalDegree;
+    //刻度线颜色
+    private Paint mDialPaint;
+    private float mDialWidth;
+    private int mDialColor;
+
 
     //圆心坐标，半径
     private Point mCenterPoint;
@@ -120,7 +126,6 @@ public class AnnulusProgress extends View {
         mPrecisionFormat = MiscUtil.getPrecisionFormat(mPrecision);
         mValueColor = typedArray.getColor(R.styleable.AnnulusProgress_valueColor, Color.BLACK);
         mValueSize = typedArray.getDimension(R.styleable.AnnulusProgress_valueSize, Constants.DEFAULT_VALUE_SIZE);
-
         mUnit = typedArray.getString(R.styleable.AnnulusProgress_unit);
         mUnitColor = typedArray.getColor(R.styleable.AnnulusProgress_unitColor, Color.BLACK);
         mUnitSize = typedArray.getDimension(R.styleable.AnnulusProgress_unitSize, Constants.DEFAULT_UNIT_SIZE);
@@ -133,8 +138,12 @@ public class AnnulusProgress extends View {
         mBgArcWidth = typedArray.getDimension(R.styleable.AnnulusProgress_bgArcWidth, Constants.DEFAULT_ARC_WIDTH);
         mTextOffsetPercentInRadius = typedArray.getFloat(R.styleable.AnnulusProgress_textOffsetPercentInRadius, 0.33f);
 
-        //mPercent = typedArray.getFloat(R.styleable.AnnulusProgress_percent, 0);
+
         mAnimTime = typedArray.getInt(R.styleable.AnnulusProgress_animTime, Constants.DEFAULT_ANIM_TIME);
+
+        mDialIntervalDegree = typedArray.getInt(R.styleable.AnnulusProgress_dialIntervalDegree, 3);
+        mDialWidth = typedArray.getDimension(R.styleable.AnnulusProgress_dialWidth, 2);
+        mDialColor = typedArray.getColor(R.styleable.AnnulusProgress_dialColor, getResources().getColor(R.color.dialColor));
 
         int gradientArcColors = typedArray.getResourceId(R.styleable.AnnulusProgress_arcColors, 0);
         if (gradientArcColors != 0) {
@@ -201,6 +210,11 @@ public class AnnulusProgress extends View {
         mBgArcPaint.setStyle(Paint.Style.STROKE);
         mBgArcPaint.setStrokeWidth(mBgArcWidth);
         mBgArcPaint.setStrokeCap(Paint.Cap.ROUND);
+
+        mDialPaint = new Paint();
+        mDialPaint.setAntiAlias(antiAlias);
+        mDialPaint.setColor(mDialColor);
+        mDialPaint.setStrokeWidth(mDialWidth);
     }
 
     @Override
@@ -249,6 +263,7 @@ public class AnnulusProgress extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        drawDial(canvas);
         drawText(canvas);
         drawArc(canvas);
     }
@@ -277,7 +292,7 @@ public class AnnulusProgress extends View {
         canvas.save();
         float currentAngle = mSweepAngle * mPercent;
         canvas.rotate(mStartAngle, mCenterPoint.x, mCenterPoint.y);
-        canvas.drawArc(mRectF, currentAngle, mSweepAngle - currentAngle, false, mBgArcPaint);
+//        canvas.drawArc(mRectF, currentAngle, mSweepAngle - currentAngle, false, mBgArcPaint);
         // 第一个参数 oval 为 RectF 类型，即圆弧显示区域
         // startAngle 和 sweepAngle  均为 float 类型，分别表示圆弧起始角度和圆弧度数
         // 3点钟方向为0度，顺时针递增
@@ -287,12 +302,26 @@ public class AnnulusProgress extends View {
         canvas.restore();
     }
 
+    private void drawDial(Canvas canvas) {
+        int total = (int) (mSweepAngle / mDialIntervalDegree);
+        canvas.save();
+        canvas.rotate(mStartAngle, mCenterPoint.x, mCenterPoint.y);
+        for (int i = 0; i <= total; i++) {
+            canvas.drawLine(mCenterPoint.x + mRadius + 12, mCenterPoint.y, mCenterPoint.x + mRadius + mArcWidth - 15, mCenterPoint.y, mDialPaint);
+            canvas.rotate(mDialIntervalDegree, mCenterPoint.x, mCenterPoint.y);
+        }
+        canvas.restore();
+    }
+
+    private int startColor = getResources().getColor(R.color.progressStartColor);
+    private int endColor = getResources().getColor(R.color.progressEndColor);
+
     /**
      * 更新圆弧画笔
      */
     private void updateArcPaint() {
         // 设置渐变
-        int[] mGradientColors = {Color.GREEN, Color.YELLOW, Color.RED, Color.GREEN};
+        int[] mGradientColors = {startColor, endColor, startColor};
         mSweepGradient = new SweepGradient(mCenterPoint.x, mCenterPoint.y, mGradientColors, null);
         mArcPaint.setShader(mSweepGradient);
     }
@@ -332,9 +361,9 @@ public class AnnulusProgress extends View {
         }
 
         float start = mPercent;
-
+        progress = 5000;
         if (mMaxValue == 0) {
-            mMaxValue = 5000;
+            mMaxValue = 8000;
         }
 
         BigDecimal bigDecimal1 = new BigDecimal(Float.toString(progress));
