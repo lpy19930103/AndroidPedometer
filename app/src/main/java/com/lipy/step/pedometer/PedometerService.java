@@ -1,7 +1,10 @@
 package com.lipy.step.pedometer;
 
 import com.lipy.step.common.BaseApplication;
+import com.lipy.step.dao.DaoSession;
 import com.lipy.step.dao.PedometerEntity;
+import com.lipy.step.dao.PedometerEntityDao;
+import com.lipy.step.receiver.AlarmBroadcastReceiver;
 import com.lipy.step.result.PedometerUpDateListener;
 import com.lipy.step.utils.HardwarePedometerUtil;
 
@@ -21,6 +24,8 @@ import android.os.RemoteException;
 import android.os.SystemClock;
 import android.util.Log;
 
+import java.util.List;
+
 /**
  * 计步器服务，启动条件：
  * 1.有TYPE_STEP_COUNTER；
@@ -28,6 +33,8 @@ import android.util.Log;
  * Created by lipy on 2017/4/10 0010.
  */
 public class PedometerService extends Service {
+
+    private static final int checkServiceTime = 5 * 60 * 1000;
 
     private static String TAG = "PedometerService";
 
@@ -59,7 +66,10 @@ public class PedometerService extends Service {
                 Bundle data = msg.getData();
                 if (data != null) {
                     TAG_STEP = data.getInt("TAG_STEP");
-                    Log.e("lipy", "TAG_STEP = " + data.getInt("TAG_STEP"));
+//                    Log.e("lipy", "TAG_STEP = " + data.getInt("TAG_STEP"));
+                    if (mPedometerCore != null) {
+                        mPedometerCore.setTagStep(TAG_STEP);
+                    }
                 }
 
                 if (mClientMessenger == null) {
@@ -81,6 +91,7 @@ public class PedometerService extends Service {
             }
         }
     };
+    private DaoSession mDaoSession;
 
     //
 
@@ -94,10 +105,13 @@ public class PedometerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
         mContext = BaseApplication.getInstances().getAppContext();
+        mDaoSession = BaseApplication.getInstances().getDaoSession();
+
         Log.i(TAG, "PedometerService onCreate");
         mPedometerCore = ActionModule.getInstance().getPedometerRepository();
-        mPedometerCore.initData(TAG_STEP);
+        mPedometerCore.initData();
         mPedometerCore.setPedometerUpDateListener(new PedometerUpDateListener() {
             @Override
             public void PedometerUpDate(PedometerEntity pedometerEntity) {
@@ -125,13 +139,27 @@ public class PedometerService extends Service {
         Log.e(TAG, "PedometerService onStartCommand");
         //
         AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(ALARM_SERVICE);
-        long triggerAtTime = SystemClock.elapsedRealtime() + 600000;
+        long triggerAtTime = SystemClock.elapsedRealtime() + checkServiceTime;
 
         Intent i = new Intent(this, AlarmBroadcastReceiver.class);
 
         PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
 
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
+
+
+        if (mPedometerEntity != null) {
+            if (mDaoSession == null) {
+                BaseApplication.getInstances().setDatabase(this);
+            }
+            PedometerEntityDao pedometerEntityDao = mDaoSession.getPedometerEntityDao();
+            pedometerEntityDao.update(mPedometerEntity);
+
+            //test code
+            List<PedometerEntity> pedometerEntities = pedometerEntityDao.loadAll();
+            PedometerEntity pedometerEntity = pedometerEntities.get(pedometerEntities.size() - 1);
+            Log.e(TAG, "onStartCommand  DailyStep= " + pedometerEntity.getDailyStep());
+        }
 
         return START_STICKY;
     }

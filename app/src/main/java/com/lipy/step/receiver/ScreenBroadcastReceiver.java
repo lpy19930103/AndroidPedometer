@@ -1,4 +1,6 @@
-package com.lipy.step.pedometer;
+package com.lipy.step.receiver;
+
+import com.lipy.step.pedometer.ActionModule;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -21,7 +23,7 @@ public class ScreenBroadcastReceiver extends BroadcastReceiver {
         if (Intent.ACTION_SCREEN_ON.equals(action) ||// 开屏
                 Intent.ACTION_SCREEN_OFF.equals(action) ||// 锁屏
                 Intent.ACTION_USER_PRESENT.equals(action)) { // 锁屏
-            ActionModule.getInstance().getPedometerManager().checkServiceStart();
+            ActionModule.getInstance().getPedometerManager().startPedometerService();
         }
     }
 

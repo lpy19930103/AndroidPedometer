@@ -370,7 +370,7 @@ public class AnnulusProgress extends View {
         BigDecimal bigDecimal2 = new BigDecimal(Float.toString(mMaxValue));
         float end = bigDecimal1.divide(bigDecimal2).floatValue();
 
-        Log.e("lipy", "end = " + end);
+//        Log.e("lipy", "end = " + end);
         startAnimator(start, end, mAnimTime);
     }
 

@@ -1,4 +1,6 @@
-package com.lipy.step.pedometer;
+package com.lipy.step.receiver;
+
+import com.lipy.step.pedometer.PedometerService;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

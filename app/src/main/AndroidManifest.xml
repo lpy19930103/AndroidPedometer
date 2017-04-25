@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.BODY_SENSORS"/>
-    <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
+    <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT"/>
     <application
             android:name=".common.BaseApplication"
             android:allowBackup="true"
@@ -29,13 +29,13 @@
                 android:label="PedometerService"
                 android:process=":remote"/>
 
-        <receiver android:name=".pedometer.StartBroadcastReceiver">
+        <receiver android:name=".receiver.StartBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".pedometer.ScreenBroadcastReceiver">
+        <receiver android:name=".receiver.ScreenBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.SCREEN_ON"/>
                 <action android:name="android.intent.action.SCREEN_OFF"/>
@@ -43,16 +43,19 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".pedometer.AlarmBroadcastReceiver">
+        <receiver android:name=".receiver.AlarmBroadcastReceiver">
             <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.SCREEN_ON"/>-->
-                <!--<action android:name="android.intent.action.SCREEN_OFF"/>-->
-                <!--<action android:name="android.intent.action.USER_PRESENT"/>-->
+            <!--<action android:name="android.intent.action.SCREEN_ON"/>-->
+            <!--<action android:name="android.intent.action.SCREEN_OFF"/>-->
+            <!--<action android:name="android.intent.action.USER_PRESENT"/>-->
             <!--</intent-filter>-->
         </receiver>
 
-        <activity android:name=".MainActivity">
-        </activity>
+        <activity android:name=".MainActivity"/>
+        <provider
+                android:name="com.lipy.step.dao.PedometerProvider"
+                android:authorities="com.lipy.step.dao.provider"/>
+
     </application>
 
 </manifest>

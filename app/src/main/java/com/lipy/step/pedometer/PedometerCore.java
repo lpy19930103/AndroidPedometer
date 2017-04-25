@@ -56,9 +56,7 @@ public class PedometerCore implements SensorEventListener {
     /**
      *  初始化传感器相关数据
      */
-    public void initData(int tagStep) {
-
-//        TAG_STEP = tagStep;
+    public void initData() {
         CURRENT_STEP = 0;
         BaseApplication.getInstances().setDatabase(mContext);
         mPedometerEntityDao = BaseApplication.getInstances().getDaoSession().getPedometerEntityDao();
@@ -82,6 +80,10 @@ public class PedometerCore implements SensorEventListener {
 //        }
 
 
+    }
+
+    public void setTagStep(int tagStep) {
+        TAG_STEP = tagStep;
     }
 
 

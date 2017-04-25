@@ -40,7 +40,7 @@ public class generatePedometerDataBase {
         //打卡
         PedometerCard.addBooleanProperty("punchCard");
 
-
+        PedometerCard.addContentProvider();
     }
 
 
