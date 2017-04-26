@@ -52,7 +52,7 @@ public class PedometerActivity extends AppCompatActivity {
             PedometerEntity pedometerEntity = pedometerEntities.get(pedometerEntities.size() - 1);
 //            Log.e("lipy", "pedometerEntity.getTagStep()" + pedometerEntity.getTagStep());
 //            Log.e("lipy", "pedometerEntity.getDailyStep()" + pedometerEntity.getDailyStep());
-            mAnnulusProgress.setMaxValue(pedometerEntity.getTagStep());
+
             if (TimeUtil.IsYesterday(pedometerEntity.getDate())) {
                 mAnnulusProgress.setProgress(0);
             } else {

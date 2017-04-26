@@ -32,6 +32,26 @@ import java.math.BigDecimal;
 
 public class AnnulusProgress extends View {
 
+    public static final boolean ANTI_ALIAS = true;//是否开启抗锯齿
+
+    public static final int DEFAULT_SIZE = 150; //默认宽高
+
+    public static final int DEFAULT_START_ANGLE = 135;//起始点
+
+    public static final int DEFAULT_SWEEP_ANGLE = 270;//终止点
+
+    public static final int DEFAULT_ANIM_TIME = 1000;//动画时常
+
+    public static final int DEFAULT_MAX_VALUE = 8000;//最大进度
+
+    public static final int DEFAULT_VALUE = 1;//默认初始进度
+
+    public static final int DEFAULT_UNIT_SIZE = 30;//单位字体大小
+
+    public static final int DEFAULT_VALUE_SIZE = 15;//进度字体大小
+
+    public static final int DEFAULT_ARC_WIDTH = 15;//圆弧宽度
+
     private static final String TAG = AnnulusProgress.class.getSimpleName();
     private Context mContext;
 
@@ -95,7 +115,7 @@ public class AnnulusProgress extends View {
 
     private void init(Context context, AttributeSet attrs) {
         mContext = context;
-        mDefaultSize = MiscUtil.dipToPx(mContext, Constants.DEFAULT_SIZE);
+        mDefaultSize = MiscUtil.dipToPx(mContext, DEFAULT_SIZE);
         mAnimator = new ValueAnimator();
         mRectF = new RectF();
         mCenterPoint = new Point();
@@ -107,29 +127,29 @@ public class AnnulusProgress extends View {
     private void initAttrs(AttributeSet attrs) {
         TypedArray typedArray = mContext.obtainStyledAttributes(attrs, R.styleable.AnnulusProgress);
 
-        antiAlias = typedArray.getBoolean(R.styleable.AnnulusProgress_antiAlias, Constants.ANTI_ALIAS);
+        antiAlias = typedArray.getBoolean(R.styleable.AnnulusProgress_antiAlias, ANTI_ALIAS);
 
-        mValue = typedArray.getFloat(R.styleable.AnnulusProgress_value, Constants.DEFAULT_VALUE);
-        mMaxValue = typedArray.getFloat(R.styleable.AnnulusProgress_maxValue, Constants.DEFAULT_MAX_VALUE);
+        mValue = typedArray.getFloat(R.styleable.AnnulusProgress_value, DEFAULT_VALUE);
+        mMaxValue = typedArray.getFloat(R.styleable.AnnulusProgress_maxValue, DEFAULT_MAX_VALUE);
         //内容数值精度格式
         mPrecision = typedArray.getInt(R.styleable.AnnulusProgress_precision, 0);
         mPrecisionFormat = MiscUtil.getPrecisionFormat(mPrecision);
         mValueColor = typedArray.getColor(R.styleable.AnnulusProgress_valueColor, Color.BLACK);
-        mValueSize = typedArray.getDimension(R.styleable.AnnulusProgress_valueSize, Constants.DEFAULT_VALUE_SIZE);
+        mValueSize = typedArray.getDimension(R.styleable.AnnulusProgress_valueSize, DEFAULT_VALUE_SIZE);
         mUnit = typedArray.getString(R.styleable.AnnulusProgress_unit);
         mUnitColor = typedArray.getColor(R.styleable.AnnulusProgress_unitColor, Color.BLACK);
-        mUnitSize = typedArray.getDimension(R.styleable.AnnulusProgress_unitSize, Constants.DEFAULT_UNIT_SIZE);
+        mUnitSize = typedArray.getDimension(R.styleable.AnnulusProgress_unitSize, DEFAULT_UNIT_SIZE);
 
-        mArcWidth = typedArray.getDimension(R.styleable.AnnulusProgress_arcWidth, Constants.DEFAULT_ARC_WIDTH);
-        mStartAngle = typedArray.getFloat(R.styleable.AnnulusProgress_startAngle, Constants.DEFAULT_START_ANGLE);
-        mSweepAngle = typedArray.getFloat(R.styleable.AnnulusProgress_sweepAngle, Constants.DEFAULT_SWEEP_ANGLE);
+        mArcWidth = typedArray.getDimension(R.styleable.AnnulusProgress_arcWidth, DEFAULT_ARC_WIDTH);
+        mStartAngle = typedArray.getFloat(R.styleable.AnnulusProgress_startAngle, DEFAULT_START_ANGLE);
+        mSweepAngle = typedArray.getFloat(R.styleable.AnnulusProgress_sweepAngle, DEFAULT_SWEEP_ANGLE);
 
         mBgArcColor = typedArray.getColor(R.styleable.AnnulusProgress_bgArcColor, Color.WHITE);
-        mBgArcWidth = typedArray.getDimension(R.styleable.AnnulusProgress_bgArcWidth, Constants.DEFAULT_ARC_WIDTH);
+        mBgArcWidth = typedArray.getDimension(R.styleable.AnnulusProgress_bgArcWidth, DEFAULT_ARC_WIDTH);
         mTextOffsetPercentInRadius = typedArray.getFloat(R.styleable.AnnulusProgress_textOffsetPercentInRadius, 0.33f);
 
 
-        mAnimTime = typedArray.getInt(R.styleable.AnnulusProgress_animTime, Constants.DEFAULT_ANIM_TIME);
+        mAnimTime = typedArray.getInt(R.styleable.AnnulusProgress_animTime, DEFAULT_ANIM_TIME);
 
         mDialIntervalDegree = typedArray.getInt(R.styleable.AnnulusProgress_dialIntervalDegree, 3);
         mDialWidth = typedArray.getDimension(R.styleable.AnnulusProgress_dialWidth, 2);
@@ -164,7 +184,6 @@ public class AnnulusProgress extends View {
         mValuePaint.setAntiAlias(antiAlias);
         mValuePaint.setTextSize(mValueSize);
         mValuePaint.setColor(mValueColor);
-        // 设置Typeface对象，即字体风格，包括粗体，斜体以及衬线体，非衬线体等
         mValuePaint.setTypeface(Typeface.DEFAULT_BOLD);
         mValuePaint.setTextAlign(Paint.Align.CENTER);
 
@@ -176,12 +195,8 @@ public class AnnulusProgress extends View {
 
         mArcPaint = new Paint();
         mArcPaint.setAntiAlias(antiAlias);
-        // 设置画笔的样式，为FILL，FILL_OR_STROKE，或STROKE
         mArcPaint.setStyle(Paint.Style.STROKE);
-        // 设置画笔粗细
         mArcPaint.setStrokeWidth(mArcWidth);
-        // 当画笔样式为STROKE或FILL_OR_STROKE时，设置笔刷的图形样式，如圆形样式
-        // Cap.ROUND,或方形样式 Cap.SQUARE
         mArcPaint.setStrokeCap(Paint.Cap.ROUND);
 
         mBgArcPaint = new Paint();
@@ -207,7 +222,7 @@ public class AnnulusProgress extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        Log.d(TAG, "onSizeChanged: w = " + w + "; h = " + h + "; oldw = " + oldw + "; oldh = " + oldh);
+//        Log.d(TAG, "onSizeChanged: w = " + w + "; h = " + h + "; oldw = " + oldw + "; oldh = " + oldh);
         //求圆弧和背景圆弧的最大宽度
         float maxArcWidth = Math.max(mArcWidth, mBgArcWidth);
         //求最小值作为实际值
@@ -223,9 +238,7 @@ public class AnnulusProgress extends View {
         mRectF.top = mCenterPoint.y - mRadius - maxArcWidth / 2;
         mRectF.right = mCenterPoint.x + mRadius + maxArcWidth / 2;
         mRectF.bottom = mCenterPoint.y + mRadius + maxArcWidth / 2;
-        //计算文字绘制时的 baseline
-        //由于文字的baseline、descent、ascent等属性只与textSize和typeface有关，所以此时可以直接计算
-        //若value、hint、unit由同一个画笔绘制或者需要动态设置文字的大小，则需要在每次更新后再次计算
+
         mValueOffset = mCenterPoint.y ;
         mUnitOffset = mCenterPoint.y + mRadius * mTextOffsetPercentInRadius ;
         updateArcPaint();
@@ -247,9 +260,6 @@ public class AnnulusProgress extends View {
      * 绘制内容文字
      */
     private void drawText(Canvas canvas) {
-        // 计算文字宽度，由于Paint已设置为居中绘制，故此处不需要重新计算
-        // float textWidth = mValuePaint.measureText(mValue.toString());
-        // float x = mCenterPoint.x - textWidth / 2;
         canvas.drawText(String.format(mPrecisionFormat, mValue), mCenterPoint.x, mValueOffset, mValuePaint);
 
         if (mUnit != null) {
@@ -262,13 +272,9 @@ public class AnnulusProgress extends View {
         // 从进度圆弧结束的地方开始重新绘制，优化性能
         canvas.save();
         float currentAngle = mSweepAngle * mPercent;
+//        Log.e(TAG, "drawArc: currentAngle = "+currentAngle);
         canvas.rotate(mStartAngle, mCenterPoint.x, mCenterPoint.y);
 //        canvas.drawArc(mRectF, currentAngle, mSweepAngle - currentAngle, false, mBgArcPaint);
-        // 第一个参数 oval 为 RectF 类型，即圆弧显示区域
-        // startAngle 和 sweepAngle  均为 float 类型，分别表示圆弧起始角度和圆弧度数
-        // 3点钟方向为0度，顺时针递增
-        // 如果 startAngle < 0 或者 > 360,则相当于 startAngle % 360
-        // useCenter:如果为True时，在绘制圆弧时将圆心包括在内，通常用来绘制扇形
         canvas.drawArc(mRectF, 0, currentAngle, false, mArcPaint);
         canvas.restore();
     }
@@ -327,12 +333,11 @@ public class AnnulusProgress extends View {
         if (mMaxValue == 0) {
             mMaxValue = 8000;
         }
-        progress = 7000;
         BigDecimal bigDecimal1 = new BigDecimal(Float.toString(progress));
         BigDecimal bigDecimal2 = new BigDecimal(Float.toString(mMaxValue));
         float end = bigDecimal1.divide(bigDecimal2).floatValue();
 
-//        Log.e("lipy", "end = " + end);
+        Log.e("lipy", "end = " + end);
         startAnimator(start, end, mAnimTime);
     }
 
@@ -344,6 +349,9 @@ public class AnnulusProgress extends View {
             public void onAnimationUpdate(ValueAnimator animation) {
                 mPercent = (float) animation.getAnimatedValue();
                 mValue = mPercent * mMaxValue;
+//                Log.d(TAG, "onAnimationUpdate: percent = " + mPercent
+//                        + ";currentAngle = " + (mSweepAngle * mPercent)
+//                        + ";value = " + mValue);
                 invalidate();
             }
         });
