@@ -1,12 +1,6 @@
 package com.lipy.step.view;
 
-/**
- */
-
-import com.lipy.step.R;
-import com.lipy.step.common.Constants;
-import com.lipy.step.utils.MiscUtil;
-
+import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
@@ -20,8 +14,10 @@ import android.graphics.SweepGradient;
 import android.graphics.Typeface;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
+
+import com.lipy.step.R;
+import com.lipy.step.utils.ScreenUtil;
 
 import java.math.BigDecimal;
 
@@ -30,7 +26,7 @@ import java.math.BigDecimal;
  * Created by lipy on 2017/4/14 0014.
  */
 
-public class AnnulusProgress extends View {
+public class StepProgress extends View {
 
     public static final boolean ANTI_ALIAS = true;//是否开启抗锯齿
 
@@ -40,7 +36,7 @@ public class AnnulusProgress extends View {
 
     public static final int DEFAULT_SWEEP_ANGLE = 270;//终止点
 
-    public static final int DEFAULT_ANIM_TIME = 1000;//动画时常
+    public static final int DEFAULT_ANIM_TIME = 2000;//动画时常
 
     public static final int DEFAULT_MAX_VALUE = 8000;//最大进度
 
@@ -52,8 +48,11 @@ public class AnnulusProgress extends View {
 
     public static final int DEFAULT_ARC_WIDTH = 15;//圆弧宽度
 
-    private static final String TAG = AnnulusProgress.class.getSimpleName();
+    private static final String TAG = StepProgress.class.getSimpleName();
+
     private Context mContext;
+
+    private ProgressListener mProgressListener;
 
     //默认大小
     private int mDefaultSize;
@@ -108,20 +107,20 @@ public class AnnulusProgress extends View {
     private float mRadius;
     private float mTextOffsetPercentInRadius;
 
-    public AnnulusProgress(Context context, AttributeSet attrs) {
+    public StepProgress(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
     private void init(Context context, AttributeSet attrs) {
         mContext = context;
-        mDefaultSize = MiscUtil.dipToPx(mContext, DEFAULT_SIZE);
+        mDefaultSize = ScreenUtil.dipToPx(mContext, DEFAULT_SIZE);
         mAnimator = new ValueAnimator();
         mRectF = new RectF();
         mCenterPoint = new Point();
         initAttrs(attrs);
         initPaint();
-        setProgress(mValue);
+//        setProgress(mValue);
     }
 
     private void initAttrs(AttributeSet attrs) {
@@ -129,11 +128,11 @@ public class AnnulusProgress extends View {
 
         antiAlias = typedArray.getBoolean(R.styleable.AnnulusProgress_antiAlias, ANTI_ALIAS);
 
-        mValue = typedArray.getFloat(R.styleable.AnnulusProgress_value, DEFAULT_VALUE);
+        mValue = typedArray.getFloat(R.styleable.AnnulusProgress_progress, DEFAULT_VALUE);
         mMaxValue = typedArray.getFloat(R.styleable.AnnulusProgress_maxValue, DEFAULT_MAX_VALUE);
         //内容数值精度格式
         mPrecision = typedArray.getInt(R.styleable.AnnulusProgress_precision, 0);
-        mPrecisionFormat = MiscUtil.getPrecisionFormat(mPrecision);
+        mPrecisionFormat = getPrecisionFormat(mPrecision);
         mValueColor = typedArray.getColor(R.styleable.AnnulusProgress_valueColor, Color.BLACK);
         mValueSize = typedArray.getDimension(R.styleable.AnnulusProgress_valueSize, DEFAULT_VALUE_SIZE);
         mUnit = typedArray.getString(R.styleable.AnnulusProgress_unit);
@@ -215,8 +214,8 @@ public class AnnulusProgress extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(MiscUtil.measure(widthMeasureSpec, mDefaultSize),
-                MiscUtil.measure(heightMeasureSpec, mDefaultSize));
+        setMeasuredDimension(ScreenUtil.measure(widthMeasureSpec, mDefaultSize),
+                ScreenUtil.measure(heightMeasureSpec, mDefaultSize));
     }
 
     @Override
@@ -239,13 +238,13 @@ public class AnnulusProgress extends View {
         mRectF.right = mCenterPoint.x + mRadius + maxArcWidth / 2;
         mRectF.bottom = mCenterPoint.y + mRadius + maxArcWidth / 2;
 
-        mValueOffset = mCenterPoint.y ;
-        mUnitOffset = mCenterPoint.y + mRadius * mTextOffsetPercentInRadius ;
+        mValueOffset = mCenterPoint.y;
+        mUnitOffset = mCenterPoint.y + mRadius * mTextOffsetPercentInRadius;
         updateArcPaint();
     }
 
     private float getBaselineOffsetFromY(Paint paint) {
-        return MiscUtil.measureTextHeight(paint) / 2;
+        return ScreenUtil.measureTextHeight(paint) / 2;
     }
 
     @Override
@@ -325,8 +324,6 @@ public class AnnulusProgress extends View {
     public void setProgress(float progress) {
         if (progress > mMaxValue) {
             progress = mMaxValue;
-        } else if (progress <= 0) {
-            progress = 1;
         }
 
         float start = mPercent;
@@ -337,7 +334,6 @@ public class AnnulusProgress extends View {
         BigDecimal bigDecimal2 = new BigDecimal(Float.toString(mMaxValue));
         float end = bigDecimal1.divide(bigDecimal2).floatValue();
 
-        Log.e("lipy", "end = " + end);
         startAnimator(start, end, mAnimTime);
     }
 
@@ -353,6 +349,31 @@ public class AnnulusProgress extends View {
 //                        + ";currentAngle = " + (mSweepAngle * mPercent)
 //                        + ";value = " + mValue);
                 invalidate();
+            }
+        });
+        mAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                if (mProgressListener != null) {
+                    mProgressListener.start();
+                }
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (mProgressListener != null) {
+                    mProgressListener.end();
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
             }
         });
         mAnimator.start();
@@ -381,7 +402,7 @@ public class AnnulusProgress extends View {
 
     public void setPrecision(int precision) {
         mPrecision = precision;
-        mPrecisionFormat = MiscUtil.getPrecisionFormat(precision);
+        mPrecisionFormat = getPrecisionFormat(precision);
     }
 
     public int[] getGradientColors() {
@@ -411,9 +432,32 @@ public class AnnulusProgress extends View {
         startAnimator(mPercent, 0.0f, 1000L);
     }
 
+    /**
+     * 获取数值精度格式化字符串
+     *
+     * @param precision
+     * @return
+     */
+    public static String getPrecisionFormat(int precision) {
+        return "%." + precision + "f";
+    }
+
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         //释放资源
+    }
+
+    public void setProgressListener(ProgressListener progressListener) {
+        mProgressListener = progressListener;
+    }
+
+    /**
+     * 进度执行监听
+     */
+    public interface ProgressListener {
+        void start();
+
+        void end();
     }
 }

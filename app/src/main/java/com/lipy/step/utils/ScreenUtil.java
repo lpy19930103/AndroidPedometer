@@ -7,7 +7,7 @@ import android.view.View;
 /**
  * Created by lipy on 2017/4/14 0014.
  */
-public class MiscUtil {
+public class ScreenUtil {
 
     /**
      * 测量 View

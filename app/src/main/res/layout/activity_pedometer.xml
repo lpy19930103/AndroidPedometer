@@ -17,21 +17,21 @@
                             android:layout_marginTop="239dp"
                             android:layout_height="wrap_content">
 
-                <com.lipy.step.view.AnnulusProgress
-                        android:layout_centerHorizontal="true"
-                        android:id="@+id/pedometer_progress"
-                        android:layout_width="178dp"
-                        android:layout_height="178dp"
-                        android:layout_gravity="center"
-                        app:antiAlias="false"
-                        app:arcWidth="15dp"
-                        app:bgArcWidth="15dp"
-                        app:startAngle="135"
-                        app:sweepAngle="270"
-                        app:unit="当前步数"
-                        app:unitSize="15sp"
-                        app:value="1"
-                        app:valueSize="33sp"/>
+
+                <com.lipy.step.view.StepProgress
+                    android:id="@+id/pedometer_progress"
+                    android:layout_width="178dp"
+                    android:layout_height="178dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    app:antiAlias="false"
+                    app:arcWidth="15dp"
+                    app:bgArcWidth="15dp"
+                    app:startAngle="135"
+                    app:sweepAngle="270"
+                    app:unit="当前步数"
+                    app:unitSize="15sp"
+                    app:valueSize="33sp" />
 
                 <TextView android:layout_width="wrap_content"
                           android:textSize="14sp"

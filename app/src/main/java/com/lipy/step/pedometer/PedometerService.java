@@ -1,13 +1,5 @@
 package com.lipy.step.pedometer;
 
-import com.lipy.step.common.BaseApplication;
-import com.lipy.step.dao.DaoSession;
-import com.lipy.step.dao.PedometerEntity;
-import com.lipy.step.dao.PedometerEntityDao;
-import com.lipy.step.receiver.AlarmBroadcastReceiver;
-import com.lipy.step.result.PedometerUpDateListener;
-import com.lipy.step.utils.HardwarePedometerUtil;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -23,6 +15,15 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.os.SystemClock;
 import android.util.Log;
+
+import com.lipy.step.common.BaseApplication;
+import com.lipy.step.dao.DaoSession;
+import com.lipy.step.dao.PedometerEntity;
+import com.lipy.step.dao.PedometerEntityDao;
+import com.lipy.step.receiver.AlarmBroadcastReceiver;
+import com.lipy.step.result.PedometerUpDateListener;
+import com.lipy.step.utils.HardwarePedometerUtil;
+import com.lipy.step.utils.TimeUtil;
 
 import java.util.List;
 
@@ -66,9 +67,7 @@ public class PedometerService extends Service {
                 Bundle data = msg.getData();
                 if (data != null) {
                     TAG_STEP = data.getInt("TAG_STEP");
-//                    Log.e("lipy", "TAG_STEP = " + data.getInt("TAG_STEP"));
                     if (mPedometerCore != null) {
-                        mPedometerCore.setTagStep(TAG_STEP);
                     }
                 }
 
@@ -151,6 +150,9 @@ public class PedometerService extends Service {
         if (mPedometerEntity != null) {
             if (mDaoSession == null) {
                 BaseApplication.getInstances().setDatabase(this);
+            }
+            if (22 <= TimeUtil.getHour() && TimeUtil.getHour() <= 24) {
+                mPedometerEntity.setPunchCard(true);
             }
             PedometerEntityDao pedometerEntityDao = mDaoSession.getPedometerEntityDao();
             pedometerEntityDao.update(mPedometerEntity);
