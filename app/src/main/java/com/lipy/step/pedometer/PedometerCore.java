@@ -110,7 +110,7 @@ public class PedometerCore implements SensorEventListener {
                 CURRENT_STEP = CURRENT_TOTAL_STEPS - LAST_SYSTEM_STEPS;
 
                 //系统在每次手机静止不动一会时间 下次记步会记录7步
-                if (CURRENT_STEP >= 7) {
+                if (CURRENT_STEP == 7) {
                     CURRENT_STEP = 1;
                 }
 
@@ -155,7 +155,7 @@ public class PedometerCore implements SensorEventListener {
                             }
                         } else {
                             //如果是跨天的情况下
-                            mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getYesterday(), 0, CURRENT_TOTAL_STEPS - 1, TAG_STEP, false, true));
+                            mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getYesterday(), -1, CURRENT_TOTAL_STEPS - 1, TAG_STEP, false, true));
                             mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false);
                             mPedometerEntityDao.insert(mTodayStepEntity);
                             Log.e(TAG, "跨天");
@@ -163,14 +163,14 @@ public class PedometerCore implements SensorEventListener {
                         }
                     } else {
                         mPedometerEntityDao.deleteAll();
-                        mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getYesterday(), 0, CURRENT_TOTAL_STEPS - 1, TAG_STEP, false, true));
+                        mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getYesterday(), -1, CURRENT_TOTAL_STEPS - 1, TAG_STEP, false, true));
                         mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false);
                         mPedometerEntityDao.insert(mTodayStepEntity);
                         Log.e(TAG, "日期为null 脏数据");
                     }
 
                 } else {
-                    mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getYesterday(), 0, CURRENT_TOTAL_STEPS - 1, TAG_STEP, false, true));
+                    mPedometerEntityDao.insert(new PedometerEntity(null, TimeUtil.getYesterday(), -1, CURRENT_TOTAL_STEPS - 1, TAG_STEP, false, true));
                     mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, true);
                     mPedometerEntityDao.insert(mTodayStepEntity);
                     Log.e(TAG, "第一次安装=  " + mPedometerEntityDao.loadAll().size());
@@ -217,7 +217,7 @@ public class PedometerCore implements SensorEventListener {
                                 if (CURRENT_STEP != 0) {
                                     CURRENT_TOTAL_STEPS = mTodayStepEntity.getTotalSteps() + CURRENT_STEP;//纠正总步数
                                 } else {
-                                    CURRENT_TOTAL_STEPS += mTodayStepEntity.getTotalSteps();//纠正总步数
+                                    CURRENT_TOTAL_STEPS = mTodayStepEntity.getTotalSteps() + CURRENT_TOTAL_STEPS - mYesterdayPedometerEntity.getTotalSteps();//纠正总步数
                                 }
                             }
                         } else if (mTodayStepEntity.getReStart()) {//当前是重启状态
@@ -225,7 +225,7 @@ public class PedometerCore implements SensorEventListener {
                             if (CURRENT_STEP != 0) {
                                 CURRENT_TOTAL_STEPS = mTodayStepEntity.getTotalSteps() + CURRENT_STEP;
                             } else {
-                                CURRENT_TOTAL_STEPS += mTodayStepEntity.getTotalSteps();
+                                CURRENT_TOTAL_STEPS = mTodayStepEntity.getTotalSteps() + CURRENT_TOTAL_STEPS - mYesterdayPedometerEntity.getTotalSteps();
                             }
                         } else {
                             //系统在每次手机静止不动一会时间 下次记步会记录7步
