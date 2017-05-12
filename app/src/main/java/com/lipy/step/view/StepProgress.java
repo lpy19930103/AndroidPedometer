@@ -14,6 +14,7 @@ import android.graphics.SweepGradient;
 import android.graphics.Typeface;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import com.lipy.step.R;
@@ -40,7 +41,7 @@ public class StepProgress extends View {
 
     public static final int DEFAULT_MAX_VALUE = 8000;//最大进度
 
-    public static final int DEFAULT_VALUE = 1;//默认初始进度
+    public static final int DEFAULT_VALUE = 0;//默认初始进度
 
     public static final int DEFAULT_UNIT_SIZE = 30;//单位字体大小
 
@@ -67,8 +68,9 @@ public class StepProgress extends View {
     private float mUnitOffset;
 
     //绘制数值
+    private float stepText = 0;//文字数值
     private TextPaint mValuePaint;
-    private float mValue = 1;
+    private float mValue = 0;//进度条数值
     private float mMaxValue = 8000;
     private float mValueOffset;
     private int mPrecision;
@@ -259,7 +261,7 @@ public class StepProgress extends View {
      * 绘制内容文字
      */
     private void drawText(Canvas canvas) {
-        canvas.drawText(String.format(mPrecisionFormat, mValue), mCenterPoint.x, mValueOffset, mValuePaint);
+        canvas.drawText(String.format(mPrecisionFormat, stepText), mCenterPoint.x, mValueOffset, mValuePaint);
 
         if (mUnit != null) {
             canvas.drawText(mUnit.toString(), mCenterPoint.x, mUnitOffset, mUnitPaint);
@@ -322,6 +324,7 @@ public class StepProgress extends View {
      * 设置当前值
      */
     public void setProgress(float progress) {
+        stepText = progress;
         if (progress > mMaxValue) {
             progress = mMaxValue;
         }
@@ -354,6 +357,7 @@ public class StepProgress extends View {
         mAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
+                Log.d(TAG, "onAnimationStart");
                 if (mProgressListener != null) {
                     mProgressListener.start();
                 }
@@ -361,6 +365,7 @@ public class StepProgress extends View {
 
             @Override
             public void onAnimationEnd(Animator animation) {
+                Log.d(TAG, "onAnimationEnd");
                 if (mProgressListener != null) {
                     mProgressListener.end();
                 }
