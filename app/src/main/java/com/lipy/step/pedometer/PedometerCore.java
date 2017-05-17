@@ -135,7 +135,7 @@ public class PedometerCore implements SensorEventListener {
                                 if (CURRENT_TOTAL_STEPS > pedometerEntity.getTotalSteps()) {//没有关机
                                     mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, false, false);
                                 } else {
-                                    mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS +
+                                    mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0,
                                             pedometerEntity.getTotalSteps(), TAG_STEP, false, false);
 
                                 }
@@ -200,39 +200,41 @@ public class PedometerCore implements SensorEventListener {
                             } else {
                                 CURRENT_TOTAL_STEPS += mTodayStepEntity.getTotalSteps();
                             }
-                        } else {
-                            //系统在每次手机静止不动一会时间 下次记步会记录7步
-                            if ((CURRENT_TOTAL_STEPS - LAST_SYSTEM_STEPS) == 7) {
-                                CURRENT_TOTAL_STEPS = CURRENT_TOTAL_STEPS - 6;
-                            }
                         }
+//                        else {
+//                            //系统在每次手机静止不动一会时间 下次记步会记录7步
+//                            if ((CURRENT_TOTAL_STEPS - LAST_SYSTEM_STEPS) == 7) {
+//                                CURRENT_TOTAL_STEPS = CURRENT_TOTAL_STEPS - 6;
+//                            }
+//                        }
                         DAILY_STEP = CURRENT_TOTAL_STEPS - mYesterdayPedometerEntity.getTagStep();
                     } else {
-                        if (CURRENT_TOTAL_STEPS < mYesterdayPedometerEntity.getTotalSteps()) {//当前系统步数 < 昨日记录总步数 可以判断为重启手机
-                            mTodayStepEntity.setReStart(true);
+//                        if (CURRENT_TOTAL_STEPS < mYesterdayPedometerEntity.getTotalSteps()) {//当前系统步数 < 昨日记录总步数 可以判断为重启手机
 
-                            CURRENT_TOTAL_STEPS += mYesterdayPedometerEntity.getTotalSteps();//纠正总步数
+//                            CURRENT_TOTAL_STEPS += mYesterdayPedometerEntity.getTotalSteps();//纠正总步数
 
                             if (mTodayStepEntity.getTotalSteps() > CURRENT_TOTAL_STEPS) {
+                                mTodayStepEntity.setReStart(true);
                                 if (CURRENT_STEP != 0) {
                                     CURRENT_TOTAL_STEPS = mTodayStepEntity.getTotalSteps() + CURRENT_STEP;//纠正总步数
                                 } else {
-                                    CURRENT_TOTAL_STEPS = mTodayStepEntity.getTotalSteps() + CURRENT_TOTAL_STEPS - mYesterdayPedometerEntity.getTotalSteps();//纠正总步数
+                                    CURRENT_TOTAL_STEPS = mTodayStepEntity.getTotalSteps() + CURRENT_TOTAL_STEPS;//纠正总步数
                                 }
-                            }
+//                            }
                         } else if (mTodayStepEntity.getReStart()) {//当前是重启状态
 
                             if (CURRENT_STEP != 0) {
                                 CURRENT_TOTAL_STEPS = mTodayStepEntity.getTotalSteps() + CURRENT_STEP;
                             } else {
-                                CURRENT_TOTAL_STEPS = mTodayStepEntity.getTotalSteps() + CURRENT_TOTAL_STEPS - mYesterdayPedometerEntity.getTotalSteps();
-                            }
-                        } else {
-                            //系统在每次手机静止不动一会时间 下次记步会记录7步
-                            if ((CURRENT_TOTAL_STEPS - LAST_SYSTEM_STEPS) == 7) {
-                                CURRENT_TOTAL_STEPS = CURRENT_TOTAL_STEPS - 6;
+                                CURRENT_TOTAL_STEPS = mTodayStepEntity.getTotalSteps() + CURRENT_TOTAL_STEPS;
                             }
                         }
+//                            else {
+//                            //系统在每次手机静止不动一会时间 下次记步会记录7步
+//                            if ((CURRENT_TOTAL_STEPS - LAST_SYSTEM_STEPS) == 7) {
+//                                CURRENT_TOTAL_STEPS = CURRENT_TOTAL_STEPS - 6;
+//                            }
+//                        }
                         DAILY_STEP = CURRENT_TOTAL_STEPS - mYesterdayPedometerEntity.getTotalSteps();//正常记步
                     }
 
