@@ -18,6 +18,7 @@ public class PedometerEntity implements Serializable{
     private Integer dailyStep;
     private Integer totalSteps;
     private Integer tagStep;
+    private Integer lastSystemSteps;
     private Boolean reStart;
     private Boolean punchCard;
 
@@ -31,12 +32,13 @@ public class PedometerEntity implements Serializable{
         this.id = id;
     }
 
-    public PedometerEntity(Long id, String date, Integer dailyStep, Integer totalSteps, Integer tagStep, Boolean reStart, Boolean punchCard) {
+    public PedometerEntity(Long id, String date, Integer dailyStep, Integer totalSteps, Integer tagStep, Integer lastSystemSteps, Boolean reStart, Boolean punchCard) {
         this.id = id;
         this.date = date;
         this.dailyStep = dailyStep;
         this.totalSteps = totalSteps;
         this.tagStep = tagStep;
+        this.lastSystemSteps = lastSystemSteps;
         this.reStart = reStart;
         this.punchCard = punchCard;
     }
@@ -81,6 +83,14 @@ public class PedometerEntity implements Serializable{
 
     public void setTagStep(Integer tagStep) {
         this.tagStep = tagStep;
+    }
+
+    public Integer getLastSystemSteps() {
+        return lastSystemSteps;
+    }
+
+    public void setLastSystemSteps(Integer lastSystemSteps) {
+        this.lastSystemSteps = lastSystemSteps;
     }
 
     public Boolean getReStart() {

@@ -27,8 +27,9 @@ public class PedometerEntityDao extends AbstractDao<PedometerEntity, Long> {
         public final static Property DailyStep = new Property(2, Integer.class, "dailyStep", false, "DAILY_STEP");
         public final static Property TotalSteps = new Property(3, Integer.class, "totalSteps", false, "TOTAL_STEPS");
         public final static Property TagStep = new Property(4, Integer.class, "tagStep", false, "TAG_STEP");
-        public final static Property ReStart = new Property(5, Boolean.class, "reStart", false, "RE_START");
-        public final static Property PunchCard = new Property(6, Boolean.class, "punchCard", false, "PUNCH_CARD");
+        public final static Property LastSystemSteps = new Property(5, Integer.class, "lastSystemSteps", false, "LAST_SYSTEM_STEPS");
+        public final static Property ReStart = new Property(6, Boolean.class, "reStart", false, "RE_START");
+        public final static Property PunchCard = new Property(7, Boolean.class, "punchCard", false, "PUNCH_CARD");
     };
 
 
@@ -49,8 +50,9 @@ public class PedometerEntityDao extends AbstractDao<PedometerEntity, Long> {
                 "\"DAILY_STEP\" INTEGER," + // 2: dailyStep
                 "\"TOTAL_STEPS\" INTEGER," + // 3: totalSteps
                 "\"TAG_STEP\" INTEGER," + // 4: tagStep
-                "\"RE_START\" INTEGER," + // 5: reStart
-                "\"PUNCH_CARD\" INTEGER);"); // 6: punchCard
+                "\"LAST_SYSTEM_STEPS\" INTEGER," + // 5: lastSystemSteps
+                "\"RE_START\" INTEGER," + // 6: reStart
+                "\"PUNCH_CARD\" INTEGER);"); // 7: punchCard
     }
 
     /** Drops the underlying database table. */
@@ -85,14 +87,19 @@ public class PedometerEntityDao extends AbstractDao<PedometerEntity, Long> {
             stmt.bindLong(5, tagStep);
         }
  
+        Integer lastSystemSteps = entity.getLastSystemSteps();
+        if (lastSystemSteps != null) {
+            stmt.bindLong(6, lastSystemSteps);
+        }
+ 
         Boolean reStart = entity.getReStart();
         if (reStart != null) {
-            stmt.bindLong(6, reStart ? 1L: 0L);
+            stmt.bindLong(7, reStart ? 1L: 0L);
         }
  
         Boolean punchCard = entity.getPunchCard();
         if (punchCard != null) {
-            stmt.bindLong(7, punchCard ? 1L: 0L);
+            stmt.bindLong(8, punchCard ? 1L: 0L);
         }
     }
 
@@ -111,8 +118,9 @@ public class PedometerEntityDao extends AbstractDao<PedometerEntity, Long> {
             cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2), // dailyStep
             cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // totalSteps
             cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // tagStep
-            cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0, // reStart
-            cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0 // punchCard
+            cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // lastSystemSteps
+            cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0, // reStart
+            cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0 // punchCard
         );
         return entity;
     }
@@ -125,8 +133,9 @@ public class PedometerEntityDao extends AbstractDao<PedometerEntity, Long> {
         entity.setDailyStep(cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2));
         entity.setTotalSteps(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
         entity.setTagStep(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
-        entity.setReStart(cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0);
-        entity.setPunchCard(cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0);
+        entity.setLastSystemSteps(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
+        entity.setReStart(cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0);
+        entity.setPunchCard(cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0);
      }
     
     /** @inheritdoc */

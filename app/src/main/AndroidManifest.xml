@@ -54,9 +54,6 @@
         </receiver>
 
         <activity android:name=".MainActivity"/>
-        <provider
-                android:name="com.lipy.step.dao.PedometerProvider"
-                android:authorities="com.lipy.step.dao.provider"/>
 
     </application>
 

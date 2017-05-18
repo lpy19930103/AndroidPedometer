@@ -13,7 +13,8 @@ public class generatePedometerDataBase {
         schema.enableKeepSectionsByDefault();
 
         addPedometer(schema);
-        new DaoGenerator().generateAll(schema, "E:/project/AndroidPedometer/mylibrary/src/main/java/");
+//        new DaoGenerator().generateAll(schema, "E:/project/AndroidPedometer/mylibrary/src/main/java/");
+        new DaoGenerator().generateAll(schema, "/Users/lipy/Documents/AndroidPedometer/mylibrary/src/main/java/");
 
     }
 
@@ -34,13 +35,13 @@ public class generatePedometerDataBase {
         PedometerCard.addIntProperty("totalSteps");
 
         PedometerCard.addIntProperty("tagStep");
+        PedometerCard.addIntProperty("lastSystemSteps");
         //是否重启手机重置，0重置，1未重置
         PedometerCard.addBooleanProperty("reStart");
 
         //打卡
         PedometerCard.addBooleanProperty("punchCard");
 
-        PedometerCard.addContentProvider();
     }
 
 
