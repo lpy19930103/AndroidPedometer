@@ -125,17 +125,17 @@ public class PedometerCore implements SensorEventListener {
                             if (pedometerEntity.getPunchCard()) {//打过卡 区分步数算入那一天
                                 Log.e(TAG, "是昨天 创建新的Entity ");
                                 if (CURRENT_TOTAL_STEPS > pedometerEntity.getTotalSteps()) {//没有关机
-                                    mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, 0, false, false);
+                                    mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, CURRENT_TOTAL_STEPS -1, false, false);
                                 } else {
                                     mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0,
-                                            pedometerEntity.getTotalSteps(), TAG_STEP, 0, false, false);
+                                            pedometerEntity.getTotalSteps(), TAG_STEP, CURRENT_TOTAL_STEPS -1, false, false);
 
                                 }
                                 mPedometerEntityDao.insert(mTodayStepEntity);
                             } else {
 //                            如果前一天未打卡就标记步数用于计算 从新开始记步
 
-                                mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, 0, false, false);
+                                mTodayStepEntity = new PedometerEntity(null, TimeUtil.getStringDateShort(), 0, CURRENT_TOTAL_STEPS, TAG_STEP, CURRENT_TOTAL_STEPS -1, false, false);
                                 TAG_STEP = CURRENT_TOTAL_STEPS;
                                 if (CURRENT_TOTAL_STEPS > 1) {
                                     TAG_STEP = CURRENT_TOTAL_STEPS - 1;
@@ -172,16 +172,22 @@ public class PedometerCore implements SensorEventListener {
 
 
                 if (mPedometerEntities.size() > 1 && !TimeUtil.IsYesterday(mTodayStepEntity.getDate())) {
-                    if (mYesterdayPedometerEntity == null) {
+                    if (mYesterdayPedometerEntity == null || !TimeUtil.IsYesterday(mYesterdayPedometerEntity.getDate())) {
                         mYesterdayPedometerEntity = mPedometerEntities.get(mPedometerEntities.size() - 2);
                     }
 
                     if (CURRENT_TOTAL_STEPS <= 7 || mTodayStepEntity.getLastSystemSteps() > CURRENT_TOTAL_STEPS) {//重启
+                        if (CURRENT_TOTAL_STEPS == LAST_SYSTEM_STEPS) {
+                            CURRENT_TOTAL_STEPS = CURRENT_TOTAL_STEPS + 1;//华为手机在传感器回掉比较特殊，会重复回掉同一个数值多次。
+                        }
                         CURRENT_STEP = CURRENT_TOTAL_STEPS - LAST_SYSTEM_STEPS;
                         mTodayStepEntity.setLastSystemSteps(0);
                         Log.d(TAG, "CURRENT_STEP1 = " + CURRENT_STEP);
 
                     } else {
+                        if (CURRENT_TOTAL_STEPS == mTodayStepEntity.getLastSystemSteps()) {
+                            CURRENT_TOTAL_STEPS = CURRENT_TOTAL_STEPS + 1;//华为手机在传感器回掉比较特殊，会重复回掉同一个数值多次。
+                        }
                         CURRENT_STEP = CURRENT_TOTAL_STEPS - mTodayStepEntity.getLastSystemSteps();
                         Log.d(TAG, "CURRENT_STEP2 = " + CURRENT_STEP);
                     }
